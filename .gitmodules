@@ -1,0 +1,3 @@
+[submodule "nordic-netex-ontology"]
+	path = nordic-netex-ontology
+	url = https://github.com/entur/nordic-netex-ontology.git

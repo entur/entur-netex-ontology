@@ -1,0 +1,354 @@
+## -----------------------------------------------------------------
+## NSR (National Stop Place Registry) Service Sub-Profile
+## -----------------------------------------------------------------
+## ROLE: Describes the NeTEx profile for data produced by NSR (Tiamat).
+##       Declares what NSR exports, which fields are used, keyList
+##       conventions, hierarchy rules, and external references.
+##
+## Unlike operator-delivered data that is IMPORTED and validated,
+## NSR is AUTHORITATIVE — it produces the master stop place data
+## that all other systems reference.
+##
+## Imports: netex-entur.ttl (Entur governance + codespaces)
+##          → netex-nordic.ttl → netex.ttl
+##
+## Based on: Tiamat export (RailStations, 2026-04-26)
+## -----------------------------------------------------------------
+
+@prefix netex:   <https://netex-cen.eu/ontology#> .
+@prefix profile: <https://netex-cen.eu/profile#> .
+@prefix entur:   <https://entur.org/ontology#> .
+@prefix nsr:     <https://entur.org/service/nsr#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+## --- Import Entur governance ---
+<https://entur.org/service/nsr> a owl:Ontology ;
+    owl:imports <https://entur.org/ontology> .
+
+## =================================================================
+## SERVICE DEFINITION
+## =================================================================
+
+nsr:StopPlaceRegistry a netex:SubProfile ;
+    rdfs:label "NSR — National Stop Place Registry" ;
+    skos:definition "Sub-profile for the authoritative national stop place registry (Tiamat). Produces StopPlace, Quay, TopographicPlace as master data referenced by all operator deliveries." ;
+    netex:basedOn profile:NP ;
+    nsr:managedBy entur:CodespaceNSR ;
+    nsr:dataFlowDirection nsr:Authoritative ;
+    nsr:backend "Tiamat" ;
+    nsr:exportFormat "NeTEx XML (PublicationDelivery)" .
+
+## =================================================================
+## DATA FLOW DIRECTION
+## =================================================================
+
+nsr:Authoritative a owl:NamedIndividual ;
+    rdfs:label "Authoritative (master)" ;
+    skos:definition "NSR is the source of truth. External data is validated AGAINST NSR, not imported INTO it." .
+
+## =================================================================
+## EXPORTED FRAMES
+## =================================================================
+## NSR exports data in two frames within a PublicationDelivery:
+## - ServiceFrame: ScheduledStopPoints (boarding/alighting assignments)
+## - SiteFrame: TopographicPlaces + StopPlaces with Quays
+
+nsr:ExportedServiceFrame a owl:NamedIndividual ;
+    rdfs:label "NSR ServiceFrame" ;
+    skos:definition "Contains ScheduledStopPoints mapped to quays" .
+
+nsr:ExportedSiteFrame a owl:NamedIndividual ;
+    rdfs:label "NSR SiteFrame" ;
+    skos:definition "Contains TopographicPlaces and StopPlaces with nested Quays" .
+
+## =================================================================
+## NSR StopPlace SHACL SHAPE
+## =================================================================
+## Constraints specific to NSR-produced StopPlace data.
+## These describe what NSR EXPORTS — not what operators deliver.
+
+nsr:NSR_StopPlaceShape a sh:NodeShape ;
+    sh:targetClass netex:StopPlace ;
+    rdfs:label "StopPlace — NSR export constraints" ;
+
+    ## --- Required fields ---
+    sh:property [
+        sh:path netex:StopPlace_Name ;
+        sh:minCount 1 ;
+        sh:name "Name" ;
+        sh:description "Station name (lang=nor)"
+    ] , [
+        sh:path netex:StopPlace_Centroid ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:name "Centroid" ;
+        sh:description "Geographic location (WGS84)"
+    ] , [
+        sh:path netex:StopPlace_TransportMode ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:name "TransportMode" ;
+        sh:description "Primary transport mode (rail, bus, water, etc.)"
+    ] , [
+        sh:path netex:StopPlace_StopPlaceType ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:name "StopPlaceType" ;
+        sh:description "Classification (railStation, busStation, etc.)"
+    ] ;
+
+    ## --- Used fields (0..1) ---
+    sh:property [
+        sh:path netex:StopPlace_TopographicPlaceRef ;
+        sh:maxCount 1 ;
+        sh:name "TopographicPlaceRef" ;
+        sh:description "Reference to municipality/county (KVE: codespace)"
+    ] , [
+        sh:path netex:StopPlace_ParentSiteRef ;
+        sh:maxCount 1 ;
+        sh:name "ParentSiteRef" ;
+        sh:description "Reference to parent StopPlace (monomodal → multimodal hierarchy)"
+    ] , [
+        sh:path netex:StopPlace_AccessibilityAssessment ;
+        sh:maxCount 1 ;
+        sh:name "AccessibilityAssessment"
+    ] , [
+        sh:path netex:StopPlace_Weighting ;
+        sh:maxCount 1 ;
+        sh:name "Weighting" ;
+        sh:description "Interchange weighting (interchangeAllowed, etc.)"
+    ] , [
+        sh:path netex:StopPlace_ValidBetween ;
+        sh:maxCount 1 ;
+        sh:name "ValidBetween"
+    ] ;
+
+    ## --- Used fields (0..*) ---
+    sh:property [
+        sh:path netex:StopPlace_quays ;
+        sh:name "quays" ;
+        sh:description "Contained Quay elements"
+    ] , [
+        sh:path netex:StopPlace_tariffZones ;
+        sh:name "tariffZones" ;
+        sh:description "TariffZoneRef / FareZoneRef (operator codespace)"
+    ] , [
+        sh:path netex:StopPlace_placeEquipments ;
+        sh:maxCount 1 ;
+        sh:name "placeEquipments" ;
+        sh:description "Equipment: SanitaryEquipment, WaitingRoomEquipment, etc."
+    ] .
+
+## =================================================================
+## NSR Quay SHACL SHAPE
+## =================================================================
+
+nsr:NSR_QuayShape a sh:NodeShape ;
+    sh:targetClass netex:Quay ;
+    rdfs:label "Quay — NSR export constraints" ;
+
+    sh:property [
+        sh:path netex:Quay_Centroid ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:name "Centroid" ;
+        sh:description "Geographic location of quay (WGS84)"
+    ] , [
+        sh:path netex:Quay_PublicCode ;
+        sh:maxCount 1 ;
+        sh:name "PublicCode" ;
+        sh:description "Platform number as displayed to passengers"
+    ] , [
+        sh:path netex:Quay_PrivateCode ;
+        sh:maxCount 1 ;
+        sh:name "PrivateCode" ;
+        sh:description "Internal platform identifier"
+    ] , [
+        sh:path netex:Quay_AccessibilityAssessment ;
+        sh:maxCount 1 ;
+        sh:name "AccessibilityAssessment"
+    ] .
+
+## =================================================================
+## NSR TopographicPlace SHACL SHAPE
+## =================================================================
+
+nsr:NSR_TopographicPlaceShape a sh:NodeShape ;
+    sh:targetClass netex:TopographicPlace ;
+    rdfs:label "TopographicPlace — NSR export constraints" ;
+
+    sh:property [
+        sh:path netex:TopographicPlace_TopographicPlaceType ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:name "TopographicPlaceType" ;
+        sh:description "Hierarchy level: country, county, municipality"
+    ] , [
+        sh:path netex:TopographicPlace_ParentTopographicPlaceRef ;
+        sh:maxCount 1 ;
+        sh:name "ParentTopographicPlaceRef" ;
+        sh:description "Parent in geographic hierarchy"
+    ] .
+
+## =================================================================
+## KEYLIST CONVENTIONS
+## =================================================================
+## NSR uses keyList/KeyValue pairs for cross-system identifiers.
+## These are not part of NeTEx standard but are NSR-specific metadata.
+
+nsr:KeyConvention a owl:Class ;
+    rdfs:label "NSR KeyList Convention" ;
+    skos:definition "A named key used in NSR's keyList for cross-referencing with external systems" .
+
+nsr:key-jbvCode a nsr:KeyConvention ;
+    rdfs:label "jbvCode" ;
+    skos:definition "Jernbaneverket (Bane NOR) station code (e.g. DRD)" ;
+    nsr:externalSystem "Bane NOR" .
+
+nsr:key-uicCode a nsr:KeyConvention ;
+    rdfs:label "uicCode" ;
+    skos:definition "International UIC station code (e.g. 7602103)" ;
+    nsr:externalSystem "UIC" .
+
+nsr:key-iffCode a nsr:KeyConvention ;
+    rdfs:label "iffCode" ;
+    skos:definition "IFF station code (typically same as UIC)" ;
+    nsr:externalSystem "IFF" .
+
+nsr:key-lisaId a nsr:KeyConvention ;
+    rdfs:label "lisaId" ;
+    skos:definition "Lisa system identifier" ;
+    nsr:externalSystem "Lisa" .
+
+nsr:key-tpsiId a nsr:KeyConvention ;
+    rdfs:label "tpsiId" ;
+    skos:definition "TPSI (legacy system) identifier" ;
+    nsr:externalSystem "TPSI" .
+
+nsr:key-imported-id a nsr:KeyConvention ;
+    rdfs:label "imported-id" ;
+    skos:definition "Comma-separated list of original IDs from migrated systems (NSB, RUT, FLT, etc.)" ;
+    nsr:externalSystem "Legacy (multiple)" .
+
+nsr:key-IS_PARENT_STOP_PLACE a nsr:KeyConvention ;
+    rdfs:label "IS_PARENT_STOP_PLACE" ;
+    skos:definition "Boolean flag: true = multimodal parent, false = monomodal child. Controls StopPlace hierarchy." ;
+    nsr:externalSystem "NSR internal" .
+
+## =================================================================
+## CODESPACE REFERENCES (external systems referenced by NSR)
+## =================================================================
+
+nsr:CodespaceKVE a netex:Codespace ;
+    rdfs:label "KVE" ;
+    skos:definition "Kartverket — provides TopographicPlace (municipality/county) data" ;
+    nsr:externalSystem "Kartverket" ;
+    nsr:manages netex:TopographicPlace ;
+    nsr:note "NSR references KVE:TopographicPlace for municipality assignment" .
+
+nsr:CodespaceLAN a netex:Codespace ;
+    rdfs:label "LAN" ;
+    skos:definition "County/municipality codes used in TopographicPlace hierarchy" ;
+    nsr:externalSystem "National registry (LAN)" ;
+    nsr:manages netex:TopographicPlace ;
+    nsr:note "LAN:TopographicPlace with 2-digit (county) or 4-digit (municipality) codes" .
+
+nsr:CodespaceWOF a netex:Codespace ;
+    rdfs:label "WOF" ;
+    skos:definition "Who's On First — country-level TopographicPlace" ;
+    nsr:externalSystem "Who's On First" ;
+    nsr:manages netex:TopographicPlace .
+
+## =================================================================
+## STOPPLACE HIERARCHY MODEL
+## =================================================================
+## NSR uses a parent/child hierarchy for multimodal stops:
+##
+##   NSR:StopPlace:58878 (parent, IS_PARENT_STOP_PLACE=true)
+##     └─ NSR:StopPlace:1 (child, ParentSiteRef → 58878)
+##
+## Parent StopPlaces aggregate children for interchange purposes.
+## The Nordic Profile normally excludes ParentSiteRef for operator
+## deliveries, but NSR itself uses it to structure the hierarchy.
+
+nsr:HierarchyNote a owl:NamedIndividual ;
+    rdfs:label "NSR StopPlace Hierarchy" ;
+    skos:definition "Parent StopPlaces (IS_PARENT_STOP_PLACE=true) group monomodal children. ParentSiteRef on children points to parent. This hierarchy is managed exclusively by NSR." .
+
+## =================================================================
+## TRANSPORT MODES IN NSR (for rail stations export)
+## =================================================================
+
+nsr:StopPlaceTypeConstraint a sh:NodeShape ;
+    sh:targetClass netex:StopPlace ;
+    rdfs:label "NSR StopPlaceType — allowed values for rail export" ;
+    sh:property [
+        sh:path netex:StopPlace_StopPlaceType ;
+        sh:in ( "railStation" "metroStation" "tramStation" "busStation"
+                "ferryStop" "airport" "harbourPort" "onstreetBus"
+                "onstreetTram" "liftStation" ) ;
+        sh:name "StopPlaceType" ;
+        sh:description "Enumerated stop place types used in NSR"
+    ] .
+
+## =================================================================
+## ACCESSIBILITY MODEL
+## =================================================================
+## NSR exports AccessibilityAssessment at both StopPlace and Quay level.
+## Each contains an AccessibilityLimitation with boolean/unknown fields.
+
+nsr:NSR_AccessibilityLimitationShape a sh:NodeShape ;
+    sh:targetClass netex:AccessibilityLimitation ;
+    rdfs:label "AccessibilityLimitation — NSR fields" ;
+    sh:property [
+        sh:path netex:AccessibilityLimitation_WheelchairAccess ;
+        sh:minCount 1 ;
+        sh:name "WheelchairAccess"
+    ] , [
+        sh:path netex:AccessibilityLimitation_StepFreeAccess ;
+        sh:minCount 1 ;
+        sh:name "StepFreeAccess"
+    ] , [
+        sh:path netex:AccessibilityLimitation_EscalatorFreeAccess ;
+        sh:minCount 1 ;
+        sh:name "EscalatorFreeAccess"
+    ] , [
+        sh:path netex:AccessibilityLimitation_LiftFreeAccess ;
+        sh:minCount 1 ;
+        sh:name "LiftFreeAccess"
+    ] , [
+        sh:path netex:AccessibilityLimitation_AudibleSignalsAvailable ;
+        sh:minCount 1 ;
+        sh:name "AudibleSignalsAvailable"
+    ] , [
+        sh:path netex:AccessibilityLimitation_VisualSignsAvailable ;
+        sh:minCount 1 ;
+        sh:name "VisualSignsAvailable"
+    ] .
+
+## =================================================================
+## PLACE EQUIPMENT
+## =================================================================
+## NSR can export equipment information at StopPlace level.
+
+nsr:NSR_PlaceEquipmentNote a owl:NamedIndividual ;
+    rdfs:label "NSR PlaceEquipment types" ;
+    skos:definition "Equipment types observed in NSR exports: SanitaryEquipment, WaitingRoomEquipment, ShelterEquipment, CycleStorageEquipment, GeneralSign" .
+
+## =================================================================
+## RELATIONSHIP TO OTHER SYSTEMS
+## =================================================================
+## Operator deliveries MUST reference NSR StopPlace/Quay IDs.
+## These references are validated during NeTEx import to Entur.
+
+nsr:ValidationRule a owl:NamedIndividual ;
+    rdfs:label "StopPlace reference validation" ;
+    skos:definition "All PassengerStopAssignment.QuayRef in operator deliveries must resolve to a valid NSR:Quay. Invalid references cause import rejection." .
+
+## =================================================================
+## END OF NSR SERVICE SUB-PROFILE
+## =================================================================
