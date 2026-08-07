@@ -10,12 +10,14 @@
 ## agreement, but necessary for operators delivering data to Entur.
 ##
 ## Imports: netex-nordic.ttl (Nordic Profile constraints)
-##          → which imports netex.ttl (base NeTEx classes)
+##          → which imports the generated NeTEx base ontology (netex:)
+##            and the Nordic vocabulary (nordic:)
 ##
 ## Generated: 2026-06-09
 ## -----------------------------------------------------------------
 
 @prefix netex:   <https://netex-cen.eu/ontology#> .
+@prefix nordic:  <https://netex-cen.eu/nordic#> .
 @prefix entur:   <https://entur.org/ontology#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
@@ -37,6 +39,16 @@ entur:PartnerModule a owl:Class ;
     rdfs:label "PartnerModule" ;
     skos:definition "A microservice module within the Entur Partner portal" .
 
+## SubProfile and basedOn are Entur concepts — the generated netex: base
+## intentionally mints no terms beyond the XSD, so these live here.
+entur:SubProfile a owl:Class ;
+    rdfs:label "SubProfile" ;
+    skos:definition "A service-scoped subset of a profile, declaring what a specific Entur system consumes/produces" .
+
+entur:basedOn a owl:ObjectProperty ;
+    rdfs:label "basedOn" ;
+    skos:definition "Relates an Entur sub-profile to the Nordic Profile it constrains further" .
+
 ## =================================================================
 ## DATA GOVERNANCE
 ## =================================================================
@@ -44,11 +56,11 @@ entur:PartnerModule a owl:Class ;
 ## NeTEx deliveries that REFERENCE objects in these registries.
 ## -----------------------------------------------------------------
 
-entur:CentralRegistry a netex:DataSource ;
+entur:CentralRegistry a nordic:DataSource ;
     rdfs:label "Central registry (Entur)" ;
     skos:definition "Mastered in Entur's shared national registry. Operators reference these objects by id but do not produce or version them." .
 
-entur:OperatorDelivery a netex:DataSource ;
+entur:OperatorDelivery a nordic:DataSource ;
     rdfs:label "Operator delivery" ;
     skos:definition "Produced by operators in their NeTEx deliveries to Entur. May contain references to central registry objects." .
 

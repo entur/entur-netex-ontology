@@ -21,9 +21,11 @@ This repository contains Entur's organisation-specific layers — things that
 are **not** part of the shared Nordic agreement, but are necessary for
 operators delivering data to Entur.
 
-The shared Nordic foundation (`netex.ttl` and `netex-nordic.ttl`) lives in
-the [`nordic-netex-ontology/`](https://github.com/entur/nordic-netex-ontology)
-submodule and is not modified here.
+The shared Nordic foundation lives in the
+[`nordic-netex-ontology/`](https://github.com/entur/nordic-netex-ontology)
+submodule (the Nordic Profile overlay) and is not modified here. That overlay
+in turn builds on the **generated** NeTEx base ontology (`netex:`), which is
+projected from the official NeTEx XSD and owned externally (CEN).
 
 **Design principle:** Each layer may tighten constraints via SHACL, but never
 loosen constraints from the layer below.
@@ -35,16 +37,22 @@ entur-netex-ontology/
 ├── netex-entur.ttl              ← Entur governance (codespaces, data ownership)
 ├── netex-entur-nsr.ttl          ← NSR service sub-profile (stop places)
 ├── netex-rolling-stock.ttl      ← Rolling stock service sub-profile
-└── nordic-netex-ontology/       ← git submodule
-    ├── netex.ttl                ← NeTEx base schema (classes, references)
-    └── netex-nordic.ttl         ← Nordic Profile (SHACL constraints)
+└── nordic-netex-ontology/       ← git submodule (Nordic Profile overlay)
+    ├── netex-nordic.ttl         ← Nordic Profile (SHACL constraints, ordering)
+    ├── netex-nordic-vocab.ttl   ← Nordic vocabulary (nordic:)
+    ├── netex-nordic-model.ttl   ← curated frame containment & specialisation
+    ├── netex-transmodel-alignment.ttl ← NeTEx ⇄ Transmodel (skos)
+    └── netex-siri-bridge.ttl    ← NeTEx ⇄ SIRI real-time bridges
 ```
+
+The NeTEx base vocabulary (`netex:`) is **generated** from the NeTEx XSD and
+provided externally (CEN-owned) — it is not stored in this repository.
 
 ### Import Chain
 
 ```
-netex.ttl                              ← Base vocabulary
-└─ netex-nordic.ttl                    ← Nordic constraints
+netex: base (generated, external)      ← CEN-owned NeTEx vocabulary
+└─ netex-nordic.ttl                    ← Nordic Profile (imports base + nordic vocab)
    └─ netex-entur.ttl                  ← Entur governance
       ├─ netex-entur-nsr.ttl           ← NSR sub-profile
       └─ netex-rolling-stock.ttl       ← Rolling stock sub-profile
@@ -54,8 +62,12 @@ netex.ttl                              ← Base vocabulary
 
 | File | Layer | Contents |
 |------|-------|----------|
-| `netex.ttl` | Base schema | OWL classes, frame classes, reference metadata, XSD cardinality, SIRI bridges, Transmodel alignment |
-| `netex-nordic.ttl` | Nordic Profile | SHACL shapes for what the profile allows, requires, and excludes |
+| `netex:` base (external) | Generated base | OWL classes, properties, XSD cardinality — projected from the NeTEx XSD, CEN-owned |
+| `netex-nordic.ttl` | Nordic Profile | SHACL shapes for what the profile allows, requires, and excludes; element ordering |
+| `netex-nordic-vocab.ttl` | Nordic vocabulary | `nordic:` terms not derived from the XSD (profile meta-classes, data confidence, ordering, domain chains) |
+| `netex-nordic-model.ttl` | Nordic model | Curated frame containment and functional specialisation semantics |
+| `netex-transmodel-alignment.ttl` | Alignment | `skos` mapping from generated NeTEx classes to Transmodel concepts |
+| `netex-siri-bridge.ttl` | SIRI bridge | Which NeTEx classes are referenced by SIRI real-time services |
 | `netex-entur.ttl` | Entur governance | Codespace conventions (NSR, NOG, PEN), data ownership per class, Partner portal modules |
 | `netex-entur-nsr.ttl` | NSR sub-profile | Authoritative stop place profile — what Tiamat exports, hierarchy rules, keyList conventions |
 | `netex-rolling-stock.ttl` | Rolling stock | Which references/elements the rolling stock service consumes/produces, service-specific SHACL constraints |
@@ -98,9 +110,9 @@ To add a new service sub-profile, create a new `.ttl` file that imports
 <https://entur.org/service/your-service> a owl:Ontology ;
     owl:imports <https://entur.org/ontology> .
 
-svc:YourService a netex:SubProfile ;
+svc:YourService a entur:SubProfile ;
     rdfs:label "Your Service" ;
-    netex:basedOn profile:NP .
+    entur:basedOn profile:NP .
 ```
 
 ## Technology
@@ -117,6 +129,7 @@ svc:YourService a netex:SubProfile ;
 | Prefix | Namespace |
 |--------|-----------|
 | `netex:` | `https://netex-cen.eu/ontology#` |
+| `nordic:` | `https://netex-cen.eu/nordic#` |
 | `profile:` | `https://netex-cen.eu/profile#` |
 | `entur:` | `https://entur.org/ontology#` |
 | `nsr:` | `https://entur.org/service/nsr#` |

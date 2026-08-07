@@ -10,7 +10,7 @@
 ## that all other systems reference.
 ##
 ## Imports: netex-entur.ttl (Entur governance + codespaces)
-##          → netex-nordic.ttl → netex.ttl
+##          → netex-nordic.ttl → generated NeTEx base (netex:) + nordic vocab
 ##
 ## Based on: Tiamat export (RailStations, 2026-04-26)
 ## -----------------------------------------------------------------
@@ -33,10 +33,10 @@
 ## SERVICE DEFINITION
 ## =================================================================
 
-nsr:StopPlaceRegistry a netex:SubProfile ;
+nsr:StopPlaceRegistry a entur:SubProfile ;
     rdfs:label "NSR — National Stop Place Registry" ;
     skos:definition "Sub-profile for the authoritative national stop place registry (Tiamat). Produces StopPlace, Quay, TopographicPlace as master data referenced by all operator deliveries." ;
-    netex:basedOn profile:NP ;
+    entur:basedOn profile:NP ;
     nsr:managedBy entur:CodespaceNSR ;
     nsr:dataFlowDirection nsr:Authoritative ;
     nsr:backend "Tiamat" ;
@@ -77,24 +77,24 @@ nsr:NSR_StopPlaceShape a sh:NodeShape ;
 
     ## --- Required fields ---
     sh:property [
-        sh:path netex:StopPlace_Name ;
+        sh:path netex:name ;
         sh:minCount 1 ;
         sh:name "Name" ;
         sh:description "Station name (lang=nor)"
     ] , [
-        sh:path netex:StopPlace_Centroid ;
+        sh:path netex:centroid ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:name "Centroid" ;
         sh:description "Geographic location (WGS84)"
     ] , [
-        sh:path netex:StopPlace_TransportMode ;
+        sh:path netex:transportMode ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:name "TransportMode" ;
         sh:description "Primary transport mode (rail, bus, water, etc.)"
     ] , [
-        sh:path netex:StopPlace_StopPlaceType ;
+        sh:path netex:stopPlaceType ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:name "StopPlaceType" ;
@@ -103,41 +103,41 @@ nsr:NSR_StopPlaceShape a sh:NodeShape ;
 
     ## --- Used fields (0..1) ---
     sh:property [
-        sh:path netex:StopPlace_TopographicPlaceRef ;
+        sh:path netex:topographicPlaceRef ;
         sh:maxCount 1 ;
         sh:name "TopographicPlaceRef" ;
         sh:description "Reference to municipality/county (KVE: codespace)"
     ] , [
-        sh:path netex:StopPlace_ParentSiteRef ;
+        sh:path netex:parentSiteRef ;
         sh:maxCount 1 ;
         sh:name "ParentSiteRef" ;
         sh:description "Reference to parent StopPlace (monomodal → multimodal hierarchy)"
     ] , [
-        sh:path netex:StopPlace_AccessibilityAssessment ;
+        sh:path netex:accessibilityAssessment ;
         sh:maxCount 1 ;
         sh:name "AccessibilityAssessment"
     ] , [
-        sh:path netex:StopPlace_Weighting ;
+        sh:path netex:weighting ;
         sh:maxCount 1 ;
         sh:name "Weighting" ;
         sh:description "Interchange weighting (interchangeAllowed, etc.)"
     ] , [
-        sh:path netex:StopPlace_ValidBetween ;
+        sh:path netex:validBetween ;
         sh:maxCount 1 ;
         sh:name "ValidBetween"
     ] ;
 
     ## --- Used fields (0..*) ---
     sh:property [
-        sh:path netex:StopPlace_quays ;
+        sh:path netex:quays ;
         sh:name "quays" ;
         sh:description "Contained Quay elements"
     ] , [
-        sh:path netex:StopPlace_tariffZones ;
+        sh:path netex:tariffZones ;
         sh:name "tariffZones" ;
         sh:description "TariffZoneRef / FareZoneRef (operator codespace)"
     ] , [
-        sh:path netex:StopPlace_placeEquipments ;
+        sh:path netex:placeEquipments ;
         sh:maxCount 1 ;
         sh:name "placeEquipments" ;
         sh:description "Equipment: SanitaryEquipment, WaitingRoomEquipment, etc."
@@ -152,23 +152,23 @@ nsr:NSR_QuayShape a sh:NodeShape ;
     rdfs:label "Quay — NSR export constraints" ;
 
     sh:property [
-        sh:path netex:Quay_Centroid ;
+        sh:path netex:centroid ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:name "Centroid" ;
         sh:description "Geographic location of quay (WGS84)"
     ] , [
-        sh:path netex:Quay_PublicCode ;
+        sh:path netex:publicCode ;
         sh:maxCount 1 ;
         sh:name "PublicCode" ;
         sh:description "Platform number as displayed to passengers"
     ] , [
-        sh:path netex:Quay_PrivateCode ;
+        sh:path netex:privateCode ;
         sh:maxCount 1 ;
         sh:name "PrivateCode" ;
         sh:description "Internal platform identifier"
     ] , [
-        sh:path netex:Quay_AccessibilityAssessment ;
+        sh:path netex:accessibilityAssessment ;
         sh:maxCount 1 ;
         sh:name "AccessibilityAssessment"
     ] .
@@ -182,13 +182,13 @@ nsr:NSR_TopographicPlaceShape a sh:NodeShape ;
     rdfs:label "TopographicPlace — NSR export constraints" ;
 
     sh:property [
-        sh:path netex:TopographicPlace_TopographicPlaceType ;
+        sh:path netex:topographicPlaceType ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:name "TopographicPlaceType" ;
         sh:description "Hierarchy level: country, county, municipality"
     ] , [
-        sh:path netex:TopographicPlace_ParentTopographicPlaceRef ;
+        sh:path netex:parentTopographicPlaceRef ;
         sh:maxCount 1 ;
         sh:name "ParentTopographicPlaceRef" ;
         sh:description "Parent in geographic hierarchy"
@@ -287,7 +287,7 @@ nsr:StopPlaceTypeConstraint a sh:NodeShape ;
     sh:targetClass netex:StopPlace ;
     rdfs:label "NSR StopPlaceType — allowed values for rail export" ;
     sh:property [
-        sh:path netex:StopPlace_StopPlaceType ;
+        sh:path netex:stopPlaceType ;
         sh:in ( "railStation" "metroStation" "tramStation" "busStation"
                 "ferryStop" "airport" "harbourPort" "onstreetBus"
                 "onstreetTram" "liftStation" ) ;
@@ -305,27 +305,27 @@ nsr:NSR_AccessibilityLimitationShape a sh:NodeShape ;
     sh:targetClass netex:AccessibilityLimitation ;
     rdfs:label "AccessibilityLimitation — NSR fields" ;
     sh:property [
-        sh:path netex:AccessibilityLimitation_WheelchairAccess ;
+        sh:path netex:wheelchairAccess ;
         sh:minCount 1 ;
         sh:name "WheelchairAccess"
     ] , [
-        sh:path netex:AccessibilityLimitation_StepFreeAccess ;
+        sh:path netex:stepFreeAccess ;
         sh:minCount 1 ;
         sh:name "StepFreeAccess"
     ] , [
-        sh:path netex:AccessibilityLimitation_EscalatorFreeAccess ;
+        sh:path netex:escalatorFreeAccess ;
         sh:minCount 1 ;
         sh:name "EscalatorFreeAccess"
     ] , [
-        sh:path netex:AccessibilityLimitation_LiftFreeAccess ;
+        sh:path netex:liftFreeAccess ;
         sh:minCount 1 ;
         sh:name "LiftFreeAccess"
     ] , [
-        sh:path netex:AccessibilityLimitation_AudibleSignalsAvailable ;
+        sh:path netex:audibleSignalsAvailable ;
         sh:minCount 1 ;
         sh:name "AudibleSignalsAvailable"
     ] , [
-        sh:path netex:AccessibilityLimitation_VisualSignsAvailable ;
+        sh:path netex:visualSignsAvailable ;
         sh:minCount 1 ;
         sh:name "VisualSignsAvailable"
     ] .
