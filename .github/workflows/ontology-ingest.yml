@@ -24,6 +24,8 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  # labels settes via Issues API av create-pull-request
+  issues: write
 
 jobs:
   ingest:
