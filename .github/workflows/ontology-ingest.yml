@@ -1,0 +1,93 @@
+name: ontology-ingest
+
+# Sporer oppstrøms nordic-netex-ontology (main) og åpner PR når submodul-pinnen
+# flytter seg. Entur-ontologien bygger PÅ det nordiske fundamentet — en
+# oppstrøms-endring er et signal om at Entur-lagene kan trenge oppdatering
+# (nye/endrede/fjernede klasser eller constraints) — derfor ALLTID PR, aldri
+# auto-push.
+#
+# Kjøres 05:45 UTC, altså noen minutter FØR nordic-netex-documentation sin
+# ontology-ingest (06:00 UTC). Slik rekker pinnen her å flytte seg først, så
+# dokumentasjonsjobben plukker opp den ferske nordic-pinnen samme natt.
+
+on:
+  schedule:
+    # Hver dag 05:45 UTC — bevisst litt før dokumentasjonsjobben (06:00 UTC).
+    - cron: "45 5 * * *"
+  workflow_dispatch: {}
+
+# Én kjøring om gangen; ny natt oppdaterer samme PR-branch fremfor å lage duplikat.
+concurrency:
+  group: ontology-ingest
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Noter gammel pin
+        id: before
+        run: echo "sha=$(git -C nordic-netex-ontology rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Hent siste oppstrøms main
+        # --remote flytter pinnen til origin/main (branch=main i .gitmodules).
+        run: |
+          git submodule update --remote nordic-netex-ontology
+          git submodule update --init --recursive
+
+      - name: Noter ny pin
+        id: after
+        run: echo "sha=$(git -C nordic-netex-ontology rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Flyttet pinnen seg?
+        id: diff
+        run: |
+          if git diff --quiet --ignore-submodules=dirty; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Ingen oppstrøms-endring — pinnen står stille."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bygg PR-tekst
+        id: body
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          OLD_SHA: ${{ steps.before.outputs.sha }}
+          NEW_SHA: ${{ steps.after.outputs.sha }}
+        run: |
+          {
+            echo "Oppstrøms [\`nordic-netex-ontology\`](https://github.com/entur/nordic-netex-ontology) (main) har fått nye commits, og submodul-pinnen i dette repoet er flyttet fremover."
+            echo ""
+            echo "**Pin:** \`${OLD_SHA:0:12}\` → \`${NEW_SHA:0:12}\`"
+            echo ""
+            echo "**Oppstrøms-diff:** https://github.com/entur/nordic-netex-ontology/compare/${OLD_SHA}...${NEW_SHA}"
+            echo ""
+            echo "---"
+            echo "**Til gjennomgang:** har det nordiske fundamentet fått nye/endrede/fjernede klasser eller constraints som krever oppdaterte Entur-lag? Merge når Entur-ontologien er i synk."
+          } > pr-body.md
+          echo "path=pr-body.md" >> "$GITHUB_OUTPUT"
+
+      - name: Opprett/oppdater karantene-PR
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          base: main
+          branch: ontology-ingest/upstream
+          commit-message: "chore(ontology): bump nordic-netex-ontology til oppstrøms main"
+          title: "[oppstrøms] nordic-netex-ontology har flyttet seg — sjekk om Entur-lagene må oppdateres"
+          body-path: pr-body.md
+          labels: |
+            ontology
+            automated
+          delete-branch: false
