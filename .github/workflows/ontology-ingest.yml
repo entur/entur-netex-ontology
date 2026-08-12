@@ -30,6 +30,9 @@ permissions:
   pull-requests: write
   # labels settes via Issues API av create-pull-request
   issues: write
+  # bot-PR-en trigger ikke validate-workflowen (GITHUB_TOKEN), så vi rapporterer
+  # den påkrevde "validate"-statusen selv basert på coupling-resultatet.
+  statuses: write
 
 jobs:
   ingest:
@@ -133,6 +136,19 @@ jobs:
             automated
             ${{ steps.validate.outputs.ok == 'true' && 'auto-merge' || 'needs-review' }}
           delete-branch: true
+
+      - name: Rapporter "validate"-status på bot-PR (kobling = gate)
+        if: steps.diff.outputs.changed == 'true' && steps.cpr.outputs.pull-request-head-sha
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.cpr.outputs.pull-request-head-sha }}
+          OK: ${{ steps.validate.outputs.ok }}
+        run: |
+          state=$([ "$OK" = "true" ] && echo success || echo failure)
+          gh api --method POST "repos/${{ github.repository }}/statuses/$SHA" \
+            -f state="$state" \
+            -f context="validate" \
+            -f description="coupling gate: ok=$OK"
 
       - name: Aktiver auto-merge (grønt)
         if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.ok == 'true' && steps.cpr.outputs.pull-request-number
