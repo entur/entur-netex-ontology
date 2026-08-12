@@ -8,14 +8,16 @@
 ##       and route-data references a product delivery carries, and the
 ##       fare objects it is built from.
 ##
-## STATUS — DEMONSTRATOR, NOT YET A PRODUCED PROFILE:
-##       There is no real product export/import in production yet, so
-##       products are NOT part of the Nordic Profile. This sub-profile
-##       is an analysis of how a future export could look and which
-##       route-data dependencies it implies. It is deliberately loose:
-##       it grounds constraints only in classes that exist in the
-##       generated NeTEx base and flags everything the EFIP examples
-##       need beyond that as PROPOSAL.
+## STATUS — DEMONSTRATOR, HARMONISED WITH THE NORDIC FARES OVERLAY:
+##       No product export/import runs in production yet, so products
+##       are not ratified into the Nordic Profile. The fare vocabulary
+##       and the NP fare shapes now live in the Nordic fares overlay
+##       (netex-nordic-fares.ttl, profile:NP_Fares) — it realises this
+##       profile's former PROPOSAL list against the generated base, so
+##       every fare class here is a grounded netex: IRI. This sub-profile
+##       therefore no longer restates fare shapes: it imports the overlay
+##       and declares only the Entur product SERVICE scope (what it
+##       consumes / handles) plus any Entur tightening beyond NP.
 ##
 ## GPA PLACEMENT — TWO EXPORT VARIANTS (see examples):
 ##       (A) EFIP-style: each GenericParameterAssignment is wrapped in
@@ -24,14 +26,15 @@
 ##       (B) Current solution: GenericParameterAssignments sit inline
 ##           under validityParameterAssignments on the FSE / product /
 ##           ValidableElement.
-##       Both express the same constraints — the difference is only the
-##       nesting of the GPA. Neither shape below assumes a placement.
+##       Both express the same constraints — only the GPA nesting
+##       differs. The NP fare shapes are placement-neutral.
 ##
 ## Peer of the other service sub-profiles: imports netex-entur.ttl,
 ## never another sub-profile. The income model builds on products.
 ##
-## Imports: netex-entur.ttl (Entur governance + codespaces)
-##          → netex-nordic.ttl → generated NeTEx base (netex:) + nordic vocab
+## Imports: netex-entur.ttl (Entur governance) → netex-nordic.ttl
+##          netex-nordic-fares.ttl (Nordic fares overlay: NP fare shapes)
+##          → generated NeTEx base (netex:) + nordic vocab
 ##
 ## Generated: 2026-08-12
 ## -----------------------------------------------------------------
@@ -45,9 +48,10 @@
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 
-## --- Import Entur governance ---
+## --- Import Entur governance + Nordic fares overlay ---
 <https://entur.org/service/produkt> a owl:Ontology ;
-    owl:imports <https://entur.org/ontology> .
+    owl:imports <https://entur.org/ontology> ,
+                <https://netex-cen.eu/profile/nordic/fares> .
 
 ## =================================================================
 ## SERVICE DEFINITION
@@ -55,8 +59,8 @@
 
 produkt:ProductService a entur:SubProfile ;
     rdfs:label "Produkt — Product Service Profile" ;
-    skos:definition "Sub-profile for the fare-product catalogue (fare products, tariffs, fare tables). Grounded in the EFIP-style export examples; demonstrator only — no production I/O yet." ;
-    entur:basedOn profile:NP .
+    skos:definition "Sub-profile for the fare-product catalogue (fare products, tariffs, fare tables). Builds on the Nordic fares overlay (NP_Fares); demonstrator only — no production I/O yet." ;
+    entur:basedOn profile:NP_Fares .
 
 ## =================================================================
 ## CONSUMED REFERENCES (master + route data a product points at)
@@ -87,14 +91,35 @@ produkt:ProductService produkt:consumes
 ## =================================================================
 ## OBJECTS IN SCOPE
 ## =================================================================
-## Only fare classes that EXIST in the generated NeTEx base, plus the
-## master/route classes the products reference. The richer EFIP fare-
-## structure objects are not in the base yet — see PROPOSAL below.
+## The fare classes this service handles — now all grounded netex: IRIs
+## via the Nordic fares overlay — plus the master/route classes the
+## products reference.
 ## -----------------------------------------------------------------
 
 produkt:ProductService produkt:requiresClass
-    ## --- Fare objects present in the base ---
-    netex:FareProduct ,
+    ## --- Fare products ---
+    netex:PreassignedFareProduct ,
+    netex:AmountOfPriceUnitProduct ,
+    ## --- Fare structure ---
+    netex:FareStructureElement ,
+    netex:GenericParameterAssignment ,
+    netex:ValidableElement ,
+    netex:AccessRightInProduct ,
+    netex:GeographicalInterval ,
+    ## --- Usage parameters (from the example limitations) ---
+    netex:UserProfile ,
+    netex:CompanionProfile ,
+    netex:Refunding ,
+    netex:PurchaseWindow ,
+    netex:UsageValidityPeriod ,
+    netex:FrequencyOfUse ,
+    netex:Interchanging ,
+    ## --- Pricing grid ---
+    netex:FareTable ,
+    netex:Cell ,
+    netex:FarePrice ,
+    netex:TypeOfPricingRule ,
+    ## --- Fare geography ---
     netex:FareZone ,
     netex:TariffZone ,
     ## --- Referenced master / route data ---
@@ -104,107 +129,25 @@ produkt:ProductService produkt:requiresClass
     netex:Line .
 
 ## =================================================================
-## SERVICE-SPECIFIC CONSTRAINTS — SHACL SHAPES
+## SERVICE-SPECIFIC CONSTRAINTS
 ## =================================================================
-## Shape naming: produkt:P_{ClassName}Shape
-## Grounded only on classes/properties that exist in the base. Both GPA
-## placement variants (A/B, see header) satisfy these — the shapes do
-## not look inside the GPA nesting.
-## -----------------------------------------------------------------
-
-## A fare product is always tied to the organisation selling it.
-## Every example carries exactly one OperatorRef on the product.
-produkt:P_FareProductShape a sh:NodeShape ;
-    sh:targetClass netex:FareProduct ;
-    rdfs:label "FareProduct — Product service constraints" ;
-    sh:property [
-        sh:path netex:operatorRef ;
-        sh:minCount 1 ; sh:maxCount 1 ;
-        sh:class netex:Operator ;
-        sh:name "OperatorRef" ;
-        sh:description "The organisation the product is sold under (OperatorRef/AuthorityRef in the examples)"
-    ] .
-
-## The fare geography → route-data link: a FareZone groups the
-## ScheduledStopPoints that make up the zone. This is the dependency
-## that ties a product to the stop-place/route model.
-produkt:P_FareZoneShape a sh:NodeShape ;
-    sh:targetClass netex:FareZone ;
-    rdfs:label "FareZone — Product service constraints" ;
-    sh:property [
-        sh:path netex:FareZone_Name ;
-        sh:minCount 1 ;
-        sh:name "Name" ;
-        sh:description "Human-readable zone name"
-    ] ;
-    sh:property [
-        sh:path netex:FareZone_ScheduledStopPointRef ;
-        sh:class netex:ScheduledStopPoint ;
-        sh:name "ScheduledStopPointRef" ;
-        sh:description "Stops constituting the zone — the tie to route/stop data"
-    ] .
-
-## =================================================================
-## PROPOSAL — EFIP fare structure not yet in the generated base
-## =================================================================
-## The export examples are built from a rich fare-structure vocabulary
-## that the generated NeTEx base does NOT define yet. Ungrounded netex:
-## IRIs are avoided on purpose; add these to the base first, then move
-## them up into requiresClass / shapes here.
+## Fare-object shapes (FareProduct, PreassignedFareProduct,
+## FareStructureElement, GenericParameterAssignment, GeographicalInterval,
+## FareTable / Cell, UserProfile, Refunding, …) are OWNED by the Nordic
+## fares overlay (profile:NP_Fares, netex-nordic-fares.ttl) and are
+## placement-neutral for the two GPA variants (A/B, see header). This
+## sub-profile imports that overlay and does NOT restate those shapes.
 ##
-## SOURCE: cardinalities / enums / class hierarchies below are taken from
-## Entur's Nordic NeTEx Profile "fares" (Handbook N801), v0.96 — still
-## "awaiting review approval and inclusion in the Nordic NeTEx Profile"
-## (last changed 2022-07-28). So it is NOT ratified NP yet: capture as
-## PROPOSAL, do not hardcode. Validated example XML for each class lives
-## in entur/profile-examples → netex/fares-sales.
-##
-## PROPOSAL: add fare-product classes to the generated base (hierarchy
-##   from the v0.96 profile; all derive from PriceableObject unless noted):
-##   - PreassignedFareProduct  < FareProduct < ServiceAccessRight
-##   - AmountOfPriceUnitProduct < FareProduct           (carnet/klippekort)
-##   - FareStructureElement     < PriceableObject         (carries GPAs)
-##   - GenericParameterAssignment < Assignment            (validity params)
-##   - ValidableElement         < PriceableObject         (bundles FSEs)
-##   - AccessRightInProduct     < VersionedChild          (→ ValidableElementRef)
-##   - FareTable / Cell         < PriceableObject / VersionedChild (pricing grid)
-##   - FareStructureElementPrice, CellPrice               (Pricing group)
-##   - TypeOfPricingRule                                  (VAT/tax category)
-##
-## PROPOSAL: geographical fare factors (Fare components group):
-##   - GeographicalInterval < FareStructureFactor < PriceableObject
-##       StartGeographicalValue  xsd:decimal            0:1
-##       EndGeographicalValue    xsd:decimal            0:1
-##       NumberOfUnits           xsd:integer            0:1
-##       IntervalType            IntervalTypeEnum       0:1
-##         enum = coupon | distance | section | stop | tariffZone | tariffUnit
-##         (the examples use tariffZone and distance)
-##   - TimeInterval:  Duration xsd:duration 1:1 (rest 0:1)
-##   - FareQuotaFactor: NumberOfUnits xsd:integer 1:1   (klippekort quota)
-##
-## PROPOSAL: add usage-parameter classes seen in the limitations
-##   (all UsageParameter < ValidityParameter):
-##   UserProfile, CompanionProfile, Refunding, PurchaseWindow,
-##   UsageValidityPeriod, FrequencyOfUse, Interchanging, Reserving,
-##   LuggageAllowance, RoundTrip.
-##
-## PROPOSAL: model the two GPA placements (A EFIP-FSE-wrapped /
-##   B current-inline) explicitly once GenericParameterAssignment and
-##   FareStructureElement exist, so a single set of shapes can validate
-##   both exports. Both must resolve to the same logical constraints.
-##
-## PROPOSAL: route-data dependencies to formalise once a real export
-##   exists (candidates for stricter cross-references / Nordic profiling).
-##   Cardinalities from the v0.96 profile where known:
-##     - StartTimeAtStopPoint → ScheduledStopPointRef   1:1  (hard tie)
-##     - FareZone.members → ScheduledStopPoint   (fare geography ↔ stops)
-##     - StopPlace → TariffZoneRef                (already in base)
-##     - GeographicalInterval[IntervalType=tariffZone] → FareZone
-##     - AuthorityRef / OperatorRef → Organisation (central registry)
-##     - product/ValidableElement → TransportSubmode / Line (service scope)
-##   Because today's ids are partly synthetic, tighten these to hard
-##   sh:class/existence checks only after products are actually
-##   produced against resolvable registry data.
+## Entur-specific tightening beyond NP is added here only once a real
+## product export against resolvable registry data exists. None yet —
+## today's example ids are partly synthetic (NOR:FareZone:*,
+## INN:Authority:INN_ID), so hard cross-reference class checks are
+## deferred, mirroring the overlay's FUTURE PROFILING section:
+##   - GeographicalInterval[IntervalType=tariffZone] → FareZone
+##   - FareZone.members → ScheduledStopPoint      (fare geography ↔ stops)
+##   - AuthorityRef / OperatorRef → Organisation   (central registry)
+##   - product / ValidableElement → TransportSubmode / Line (service scope)
+## StartTimeAtStopPoint → ScheduledStopPoint is already tied 1:1 in NP.
 
 ## =================================================================
 ## END OF PRODUCT SERVICE PROFILE
