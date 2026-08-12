@@ -1,0 +1,127 @@
+## -----------------------------------------------------------------
+## Kvoter (Quota) Service Sub-Profile
+## -----------------------------------------------------------------
+## ROLE: Describes the NeTEx dependencies for the Varelager quota
+##       service. A quota is a Varelager/Entur construct — it is not
+##       necessarily a native NeTEx object. This profile pins only its
+##       NeTEx touchpoints: the departure it is anchored to and the
+##       ordered stop sequence it is allocated across.
+##
+## DESIGN INTENT — INDEPENDENCE FROM ROLLING STOCK:
+##       A quota applies to a departure (DatedServiceJourney) and its
+##       ordered stops, and does NOT require vehicle/materiel data.
+##       Quotas are used on departures WITHOUT rolling stock
+##       composition too. This sub-profile is therefore a PEER of
+##       rolling stock — it never imports it, and a quota delivery is
+##       validated against these shapes ONLY, never against the
+##       stricter rolling stock shapes (e.g. the mandatory BlockRef in
+##       RS_DatedServiceJourneyShape).
+##
+## Imports: netex-entur.ttl (Entur governance + codespaces)
+##          → netex-nordic.ttl → generated NeTEx base (netex:) + nordic vocab
+##
+## Generated: 2026-08-12
+## -----------------------------------------------------------------
+
+@prefix netex:   <https://netex-cen.eu/ontology#> .
+@prefix profile: <https://netex-cen.eu/profile#> .
+@prefix entur:   <https://entur.org/ontology#> .
+@prefix kvote:   <https://entur.org/service/kvoter#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+## --- Import Entur governance ---
+<https://entur.org/service/kvoter> a owl:Ontology ;
+    owl:imports <https://entur.org/ontology> .
+
+## =================================================================
+## SERVICE DEFINITION
+## =================================================================
+
+kvote:QuotaService a entur:SubProfile ;
+    rdfs:label "Kvoter — Quota Service Profile" ;
+    skos:definition "Sub-profile for Varelager quota allocation across a departure and its ordered stops. A quota is a Varelager construct, not a native NeTEx object; independent of rolling stock composition." ;
+    entur:basedOn profile:NP ;
+    kvote:independentOf <https://entur.org/service/rolling-stock> ;
+    kvote:requiresVehicleData false .
+
+## =================================================================
+## CONSUMED REFERENCES (reads from operator deliveries)
+## =================================================================
+## A quota is anchored to a departure and the ordered stop sequence it
+## is allocated across. It deliberately reads NO train composition.
+## -----------------------------------------------------------------
+
+kvote:QuotaService kvote:consumes
+    ## --- Departure anchor ---
+    netex:datedServiceJourneyRef ,
+    netex:serviceJourneyRef ,
+    netex:lineRef ,
+    ## --- Ordered stop sequence along the departure ---
+    netex:pointsInSequence ,
+    netex:stopPointInJourneyPatternRef ,
+    netex:scheduledStopPointRef ,
+    netex:order .
+
+## =================================================================
+## OBJECTS IN SCOPE
+## =================================================================
+## The NeTEx touchpoints a quota references: the departure and its
+## ordered stops. No Train / CompoundTrain / TrainElement — a quota
+## needs the stop sequence, not materiel. That is the point.
+## -----------------------------------------------------------------
+
+kvote:QuotaService kvote:requiresClass
+    netex:DatedServiceJourney ,
+    netex:ServiceJourney ,
+    netex:JourneyPattern ,
+    netex:StopPointInJourneyPattern ,
+    netex:ScheduledStopPoint ,
+    netex:Line .
+
+## =================================================================
+## SERVICE-SPECIFIC CONSTRAINTS — SHACL SHAPES
+## =================================================================
+## Shape naming: kvote:Q_{ClassName}Shape
+##
+## KEY DIFFERENCE vs rolling stock: this shape targets the SAME class
+## (DatedServiceJourney) but does NOT require BlockRef or any materiel.
+## A departure without rolling stock can still carry a valid quota.
+## -----------------------------------------------------------------
+
+kvote:Q_DatedServiceJourneyShape a sh:NodeShape ;
+    sh:targetClass netex:DatedServiceJourney ;
+    rdfs:label "DatedServiceJourney — Quota constraints" ;
+    ## No sh:property for netex:blockRef — intentionally unconstrained.
+    ## A quota must not force a departure to have a train block.
+    sh:property [
+        sh:path netex:operatingDayRef ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class netex:OperatingDay ;
+        sh:name "OperatingDayRef" ;
+        sh:description "The quota is bound to a concrete operating day"
+    ] .
+
+## The ordered stop sequence the quota is allocated across.
+kvote:Q_StopPointInJourneyPatternShape a sh:NodeShape ;
+    sh:targetClass netex:StopPointInJourneyPattern ;
+    rdfs:label "StopPointInJourneyPattern — Quota ordering" ;
+    sh:property [
+        sh:path netex:order ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:name "Order" ;
+        sh:description "Position in the stop sequence; the quota is allocated per leg between ordered stops"
+    ] .
+
+## PROPOSAL: "Quota" is a Varelager/Entur construct and may not be a
+## native NeTEx class. This profile pins only the NeTEx touchpoints a
+## quota references — the departure (DatedServiceJourney) and its
+## ordered stop sequence. The allocation quantity/segment model lives
+## in Varelager, not NeTEx. Confirm the property IRIs (order,
+## stopPointInJourneyPatternRef) against the generated base.
+
+## =================================================================
+## END OF QUOTA SERVICE PROFILE
+## =================================================================

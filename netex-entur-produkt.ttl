@@ -1,0 +1,58 @@
+## -----------------------------------------------------------------
+## Produkt (Product) Service Sub-Profile — SKELETON
+## -----------------------------------------------------------------
+## ROLE: Placeholder profile for the product service. Records which
+##       NeTEx fare-product objects the service relates to. SKELETON
+##       only — the real consumes/produces sets and SHACL constraints
+##       must be filled in once the product model is confirmed.
+##
+## Peer of the other service sub-profiles: imports netex-entur.ttl,
+## never another sub-profile. The income model builds on products.
+##
+## Imports: netex-entur.ttl (Entur governance + codespaces)
+##          → netex-nordic.ttl → generated NeTEx base (netex:) + nordic vocab
+##
+## Generated: 2026-08-12
+## -----------------------------------------------------------------
+
+@prefix netex:   <https://netex-cen.eu/ontology#> .
+@prefix profile: <https://netex-cen.eu/profile#> .
+@prefix entur:   <https://entur.org/ontology#> .
+@prefix produkt: <https://entur.org/service/produkt#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+## --- Import Entur governance ---
+<https://entur.org/service/produkt> a owl:Ontology ;
+    owl:imports <https://entur.org/ontology> .
+
+## =================================================================
+## SERVICE DEFINITION
+## =================================================================
+
+produkt:ProductService a entur:SubProfile ;
+    rdfs:label "Produkt — Product Service Profile (skeleton)" ;
+    skos:definition "Sub-profile for the product catalogue (fare products, sales offers). Skeleton — constraints to be confirmed." ;
+    entur:basedOn profile:NP .
+
+## =================================================================
+## OBJECTS IN SCOPE (provisional)
+## =================================================================
+## Likely NeTEx fare-product touchpoints. Confirm against the
+## generated base before adding SHACL.
+## -----------------------------------------------------------------
+
+produkt:ProductService produkt:requiresClass
+    netex:PreassignedFareProduct ,
+    netex:SalesOfferPackage ,
+    netex:UsageParameter .
+
+## PROPOSAL: Fill in produkt:consumes / produkt:produces and add
+## produkt:P_{ClassName}Shape constraints once the product model is
+## confirmed. Verify the class list against the generated NeTEx base.
+
+## =================================================================
+## END OF PRODUCT SERVICE PROFILE (skeleton)
+## =================================================================

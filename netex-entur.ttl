@@ -37,6 +37,16 @@ entur:PartnerModule a owl:Class ;
     rdfs:label "PartnerModule" ;
     skos:definition "A microservice module within the Entur Partner portal" .
 
+## SubProfile and basedOn are Entur concepts declaring what a specific
+## Entur system consumes/produces on top of the Nordic Profile.
+entur:SubProfile a owl:Class ;
+    rdfs:label "SubProfile" ;
+    skos:definition "A service-scoped subset of a profile, declaring what a specific Entur system consumes/produces" .
+
+entur:basedOn a owl:ObjectProperty ;
+    rdfs:label "basedOn" ;
+    skos:definition "Relates an Entur sub-profile to the Nordic Profile it constrains further" .
+
 ## =================================================================
 ## DATA GOVERNANCE
 ## =================================================================

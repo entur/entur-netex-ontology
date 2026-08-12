@@ -1,0 +1,97 @@
+## -----------------------------------------------------------------
+## PEN (National Rolling Stock Registry) — NeTEx Alignment Profile
+## -----------------------------------------------------------------
+## ROLE: Documents how the PEN rolling stock registry (Partner/Plass)
+##       aligns with NeTEx. PEN is a register of units, deliberately
+##       built to stay as close to NeTEx as possible for TrainElement.
+##       Each unit links to a seat map (setekart), which is itself
+##       free-standing from NeTEx as of today.
+##
+## STATUS — LOW WEIGHT (alignment only):
+##       As of today PEN does NOT import or export NeTEx. This file
+##       records the intended alignment, not an active NeTEx interface.
+##       If PEN gains NeTEx import/export in the future, this profile
+##       is the place to tighten it into an authoritative export
+##       (as netex-entur-nsr.ttl does for Tiamat).
+##
+##       For now, TrainElement is simply the register cutoff that
+##       netex-entur-rolling-stock.ttl references. Ownership lives in
+##       netex-entur.ttl (CodespacePEN).
+##
+## Imports: netex-entur.ttl (Entur governance + codespaces)
+##          → netex-nordic.ttl → generated NeTEx base (netex:) + nordic vocab
+##
+## Generated: 2026-08-12
+## -----------------------------------------------------------------
+
+@prefix netex:   <https://netex-cen.eu/ontology#> .
+@prefix profile: <https://netex-cen.eu/profile#> .
+@prefix entur:   <https://entur.org/ontology#> .
+@prefix pen:     <https://entur.org/service/pen#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+## --- Import Entur governance ---
+<https://entur.org/service/pen> a owl:Ontology ;
+    owl:imports <https://entur.org/ontology> .
+
+## =================================================================
+## SERVICE DEFINITION
+## =================================================================
+
+pen:RollingStockRegistry a entur:SubProfile ;
+    rdfs:label "PEN — National Rolling Stock Registry (NeTEx alignment)" ;
+    skos:definition "Alignment profile for the PEN rolling stock registry (Partner/Plass): a register of units aligned with NeTEx TrainElement, each linked to a seat map. Not currently a NeTEx import/export interface." ;
+    entur:basedOn profile:NP ;
+    pen:managedBy entur:CodespacePEN ;
+    pen:netexInterface pen:AlignedNoIO .
+
+## =================================================================
+## NETEX INTERFACE STATUS
+## =================================================================
+
+pen:AlignedNoIO a owl:NamedIndividual ;
+    rdfs:label "Aligned, no NeTEx I/O" ;
+    skos:definition "PEN models TrainElement in alignment with NeTEx but does not import or export NeTEx today. Future NeTEx import/export is possible; this profile would then tighten it." .
+
+## =================================================================
+## NETEX ALIGNMENT
+## =================================================================
+## The register cutoff RollingStock references. Not exported as NeTEx
+## yet — recorded here as the alignment target only.
+## -----------------------------------------------------------------
+
+pen:RollingStockRegistry pen:alignsWith
+    netex:TrainElement .
+
+## =================================================================
+## SEAT MAPS (setekart)
+## =================================================================
+## Each registered unit links to a seat map. Seat maps are, as of
+## today, free-standing from NeTEx (not modelled as netex: classes) —
+## the same situation as quotas. A future
+## netex-entur-setereservasjon.ttl would build on this layout once it
+## is expressed in NeTEx.
+## -----------------------------------------------------------------
+
+pen:SeatMap a owl:Class ;
+    rdfs:label "Seat map (setekart)" ;
+    skos:definition "Per-unit seating layout linked from a registered rolling stock unit. Free-standing from NeTEx today." ;
+    pen:netexInterface pen:AlignedNoIO .
+
+pen:unitSeatMap a owl:ObjectProperty ;
+    rdfs:label "unitSeatMap" ;
+    skos:definition "Links a registered unit (aligned with netex:TrainElement) to its seat map." ;
+    rdfs:domain netex:TrainElement ;
+    rdfs:range pen:SeatMap .
+
+## PROPOSAL: When PEN begins exporting NeTEx, add a pen:PEN_TrainElementShape
+## with the exported fields (label, operationalOrientation, typeOfFuel, …)
+## and promote pen:AlignedNoIO to an authoritative export status. Seat maps
+## would then align to a NeTEx seating construct rather than pen:SeatMap.
+
+## =================================================================
+## END OF PEN ALIGNMENT PROFILE
+## =================================================================
