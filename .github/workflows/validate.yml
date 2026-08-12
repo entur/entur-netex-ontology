@@ -1,0 +1,28 @@
+name: validate
+
+# PR-gate: hver .ttl må parse som gyldig Turtle før merge. Dette er checken et
+# ruleset på main kan kreve. Coupling-sjekken bor bevisst i ontology-ingest
+# (differensiell mot submodul-pin), ikke her — en absolutt variant ville feilet
+# på pre-eksisterende dangling referanser i den genererte basen.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.2.2
+        with:
+          submodules: recursive
+
+      - name: Parse alle Entur-lag (.ttl)
+        run: |
+          python3 -m pip install --quiet rdflib
+          python3 scripts/validate_ttl.py netex-entur*.ttl

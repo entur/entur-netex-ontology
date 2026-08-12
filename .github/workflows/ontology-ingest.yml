@@ -2,9 +2,13 @@ name: ontology-ingest
 
 # Sporer oppstrøms nordic-netex-ontology (main) og åpner PR når submodul-pinnen
 # flytter seg. Entur-ontologien bygger PÅ det nordiske fundamentet — en
-# oppstrøms-endring er et signal om at Entur-lagene kan trenge oppdatering
-# (nye/endrede/fjernede klasser eller constraints) — derfor ALLTID PR, aldri
-# auto-push.
+# oppstrøms-endring er et signal om at Entur-lagene kan trenge oppdatering.
+#
+# En differensiell referanse-integritetssjekk avgjør ruten: bryter bumpen INGEN
+# eksisterende kobling (kun tightening / additive endringer) aktiveres auto-merge
+# på PR-en (full sporbarhet). Forsvinner en referert klasse/property blir PR-en
+# holdt tilbake for menneskelig gjennomgang. Fail-safe: enhver feil = ingen
+# auto-merge.
 #
 # Kjøres 05:45 UTC, altså noen minutter FØR nordic-netex-documentation sin
 # ontology-ingest (06:00 UTC). Slik rekker pinnen her å flytte seg først, så
@@ -61,13 +65,39 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Valider koblinger (differensielt)
+        id: validate
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          OLD_SHA: ${{ steps.before.outputs.sha }}
+          NEW_SHA: ${{ steps.after.outputs.sha }}
+        run: |
+          python3 -m pip install --quiet rdflib
+          # Ny pin er allerede sjekket ut — mål dangling nå, så mot gammel pin.
+          python3 scripts/validate_couplings.py | sort > "$RUNNER_TEMP/dangling_new.txt" || true
+          git -C nordic-netex-ontology checkout --quiet "$OLD_SHA"
+          python3 scripts/validate_couplings.py | sort > "$RUNNER_TEMP/dangling_old.txt" || true
+          git -C nordic-netex-ontology checkout --quiet "$NEW_SHA"
+          newly="$(comm -13 "$RUNNER_TEMP/dangling_old.txt" "$RUNNER_TEMP/dangling_new.txt")"
+          if [ -z "$newly" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+            echo "Ingen nye brutte koblinger — bumpen er trygg."
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            { echo "newly<<EOF"; echo "$newly"; echo "EOF"; } >> "$GITHUB_OUTPUT"
+            echo "Nye brutte koblinger:"; echo "$newly"
+          fi
+
       - name: Bygg PR-tekst
         id: body
         if: steps.diff.outputs.changed == 'true'
         env:
           OLD_SHA: ${{ steps.before.outputs.sha }}
           NEW_SHA: ${{ steps.after.outputs.sha }}
+          OK: ${{ steps.validate.outputs.ok }}
+          NEWLY: ${{ steps.validate.outputs.newly }}
         run: |
+          BODY="$RUNNER_TEMP/pr-body.md"
           {
             echo "Oppstrøms [\`nordic-netex-ontology\`](https://github.com/entur/nordic-netex-ontology) (main) har fått nye commits, og submodul-pinnen i dette repoet er flyttet fremover."
             echo ""
@@ -76,11 +106,20 @@ jobs:
             echo "**Oppstrøms-diff:** https://github.com/entur/nordic-netex-ontology/compare/${OLD_SHA}...${NEW_SHA}"
             echo ""
             echo "---"
-            echo "**Til gjennomgang:** har det nordiske fundamentet fått nye/endrede/fjernede klasser eller constraints som krever oppdaterte Entur-lag? Merge når Entur-ontologien er i synk."
-          } > pr-body.md
-          echo "path=pr-body.md" >> "$GITHUB_OUTPUT"
+            if [ "$OK" = "true" ]; then
+              echo "✅ **Koblinger validert:** ingen refererte klasser/properties forsvant oppstrøms (tightening/additive endringer slipper gjennom). Auto-merge aktivert."
+            else
+              echo "⛔ **Brutte koblinger — krever gjennomgang.** Følgende refererte termer er ikke lenger definert i det nordiske fundamentet:"
+              echo ""
+              echo '```'
+              echo "$NEWLY"
+              echo '```'
+            fi
+          } > "$BODY"
+          echo "path=$BODY" >> "$GITHUB_OUTPUT"
 
       - name: Opprett/oppdater karantene-PR
+        id: cpr
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
         with:
@@ -92,4 +131,11 @@ jobs:
           labels: |
             ontology
             automated
-          delete-branch: false
+            ${{ steps.validate.outputs.ok == 'true' && 'auto-merge' || 'needs-review' }}
+          delete-branch: true
+
+      - name: Aktiver auto-merge (grønt)
+        if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.ok == 'true' && steps.cpr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-number }}"
