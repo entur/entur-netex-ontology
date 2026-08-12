@@ -1,0 +1,62 @@
+## -----------------------------------------------------------------
+## Inntektsmodell (Income Model) Service Sub-Profile — SKELETON
+## -----------------------------------------------------------------
+## ROLE: Placeholder profile for the income/revenue model (initial
+##       scope: Østlandet). Records which NeTEx tariff/fare objects
+##       the model relates to. SKELETON only — the real consumes set
+##       and SHACL constraints must be filled in once confirmed.
+##
+## Peer of the other service sub-profiles: imports netex-entur.ttl,
+## never another sub-profile. Builds conceptually on the product
+## catalogue (netex-entur-produkt.ttl).
+##
+## Imports: netex-entur.ttl (Entur governance + codespaces)
+##          → netex-nordic.ttl → generated NeTEx base (netex:) + nordic vocab
+##
+## Generated: 2026-08-12
+## -----------------------------------------------------------------
+
+@prefix netex:   <https://netex-cen.eu/ontology#> .
+@prefix profile: <https://netex-cen.eu/profile#> .
+@prefix entur:   <https://entur.org/ontology#> .
+@prefix inntekt: <https://entur.org/service/inntektsmodell#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+## --- Import Entur governance ---
+<https://entur.org/service/inntektsmodell> a owl:Ontology ;
+    owl:imports <https://entur.org/ontology> .
+
+## =================================================================
+## SERVICE DEFINITION
+## =================================================================
+
+inntekt:IncomeModelService a entur:SubProfile ;
+    rdfs:label "Inntektsmodell — Income Model Service Profile (skeleton)" ;
+    skos:definition "Sub-profile for the income/revenue model. Initial scope: Østlandet. Skeleton — constraints to be confirmed." ;
+    entur:basedOn profile:NP ;
+    inntekt:initialScope "Østlandet" .
+
+## =================================================================
+## OBJECTS IN SCOPE (provisional)
+## =================================================================
+## Likely NeTEx tariff/fare touchpoints. Confirm against the
+## generated base before adding SHACL.
+## -----------------------------------------------------------------
+
+inntekt:IncomeModelService inntekt:requiresClass
+    netex:Tariff ,
+    netex:FareStructureElement ,
+    netex:DistanceMatrixElement ,
+    netex:FareZone .
+
+## PROPOSAL: Fill in inntekt:consumes and add inntekt:IM_{ClassName}Shape
+## constraints once the income model is confirmed. Verify the class list
+## against the generated NeTEx base, and decide the coupling to the
+## product catalogue.
+
+## =================================================================
+## END OF INCOME MODEL SERVICE PROFILE (skeleton)
+## =================================================================

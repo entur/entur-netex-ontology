@@ -33,8 +33,12 @@ loosen constraints from the layer below.
 ```
 entur-netex-ontology/
 ├── netex-entur.ttl              ← Entur governance (codespaces, data ownership)
-├── netex-entur-nsr.ttl          ← NSR service sub-profile (stop places)
-├── netex-rolling-stock.ttl      ← Rolling stock service sub-profile
+├── netex-entur-nsr.ttl          ← NSR stop place register sub-profile
+├── netex-entur-pen.ttl          ← PEN rolling stock register (NeTEx alignment, no I/O yet)
+├── netex-entur-rolling-stock.ttl ← Rolling stock service (reads NeTEx, TrainElement cutoff)
+├── netex-entur-kvoter.ttl       ← Quota service (independent of materiel)
+├── netex-entur-produkt.ttl      ← Product service (skeleton)
+├── netex-entur-inntektsmodell.ttl ← Income model service (skeleton)
 └── nordic-netex-ontology/       ← git submodule
     ├── netex.ttl                ← NeTEx base schema (classes, references)
     └── netex-nordic.ttl         ← Nordic Profile (SHACL constraints)
@@ -46,9 +50,18 @@ entur-netex-ontology/
 netex.ttl                              ← Base vocabulary
 └─ netex-nordic.ttl                    ← Nordic constraints
    └─ netex-entur.ttl                  ← Entur governance
-      ├─ netex-entur-nsr.ttl           ← NSR sub-profile
-      └─ netex-rolling-stock.ttl       ← Rolling stock sub-profile
+      ├─ netex-entur-nsr.ttl           ← NSR stop place register
+      ├─ netex-entur-pen.ttl           ← PEN rolling stock register (NeTEx alignment, no I/O yet)
+      ├─ netex-entur-rolling-stock.ttl ← Rolling stock (reads NeTEx, TrainElement cutoff)
+      ├─ netex-entur-kvoter.ttl        ← Quota service (peer, no materiel)
+      ├─ netex-entur-produkt.ttl       ← Product service (skeleton)
+      └─ netex-entur-inntektsmodell.ttl ← Income model service (skeleton)
 ```
+
+Service sub-profiles are **peers**: they import `netex-entur.ttl` but never
+each other. A delivery is validated against `NP + governance + the sub-profiles
+relevant to its purpose` — so a quota delivery is never subjected to the
+stricter rolling stock shapes.
 
 ### What Each File Does
 
@@ -57,8 +70,12 @@ netex.ttl                              ← Base vocabulary
 | `netex.ttl` | Base schema | OWL classes, frame classes, reference metadata, XSD cardinality, SIRI bridges, Transmodel alignment |
 | `netex-nordic.ttl` | Nordic Profile | SHACL shapes for what the profile allows, requires, and excludes |
 | `netex-entur.ttl` | Entur governance | Codespace conventions (NSR, NOG, PEN), data ownership per class, Partner portal modules |
-| `netex-entur-nsr.ttl` | NSR sub-profile | Authoritative stop place profile — what Tiamat exports, hierarchy rules, keyList conventions |
-| `netex-rolling-stock.ttl` | Rolling stock | Which references/elements the rolling stock service consumes/produces, service-specific SHACL constraints |
+| `netex-entur-nsr.ttl` | NSR register | Authoritative stop place profile — what Tiamat exports, hierarchy rules, keyList conventions |
+| `netex-entur-pen.ttl` | PEN alignment | Register of rolling stock units aligned with NeTEx (TrainElement), each linked to a seat map. Low weight — units and seat maps are free-standing from NeTEx today; tighten here if that changes |
+| `netex-entur-rolling-stock.ttl` | Rolling stock | Reads operator NeTEx, validates, and uses the TrainElement register cutoff (PEN codespace) to build compositions; service-specific SHACL constraints |
+| `netex-entur-kvoter.ttl` | Quota | Capacity/availability across a departure and its ordered stops, independent of materiel — peer of rolling stock |
+| `netex-entur-produkt.ttl` | Product | Skeleton — product catalogue (fare products, sales offers); scope to be confirmed |
+| `netex-entur-inntektsmodell.ttl` | Income model | Skeleton — income/revenue model (initial scope: Østlandet); tariff/fare touchpoints to be confirmed |
 
 ## SHACL Validation
 
@@ -77,7 +94,8 @@ that validation tools can execute directly:
 | File | Pattern | Example |
 |------|---------|---------|
 | `netex-entur-nsr.ttl` | `nsr:NSR_{ClassName}Shape` | `nsr:NSR_StopPlaceShape` |
-| `netex-rolling-stock.ttl` | `svc:RS_{ClassName}Shape` | `svc:RS_DatedServiceJourneyShape` |
+| `netex-entur-rolling-stock.ttl` | `svc:RS_{ClassName}Shape` | `svc:RS_DatedServiceJourneyShape` |
+| `netex-entur-kvoter.ttl` | `kvote:Q_{ClassName}Shape` | `kvote:Q_DatedServiceJourneyShape` |
 
 ### Layered Validation
 
@@ -120,7 +138,11 @@ svc:YourService a netex:SubProfile ;
 | `profile:` | `https://netex-cen.eu/profile#` |
 | `entur:` | `https://entur.org/ontology#` |
 | `nsr:` | `https://entur.org/service/nsr#` |
+| `pen:` | `https://entur.org/service/pen#` |
 | `svc:` | `https://entur.org/service/rolling-stock#` |
+| `kvote:` | `https://entur.org/service/kvoter#` |
+| `produkt:` | `https://entur.org/service/produkt#` |
+| `inntekt:` | `https://entur.org/service/inntektsmodell#` |
 | `sh:` | `http://www.w3.org/ns/shacl#` |
 
 ## Tools

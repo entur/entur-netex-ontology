@@ -2,17 +2,23 @@
 ## Rolling Stock Service Sub-Profile
 ## -----------------------------------------------------------------
 ## ROLE: Describes the NeTEx dependencies for a specific Entur system
-##       (PEN/Plass). Declares which references and elements the
-##       service consumes from operator deliveries, what it produces
-##       in central registries, and any cardinality tightening beyond
-##       the Nordic Profile.
+##       (Plass). This service reads operator NeTEx deliveries,
+##       validates them, and uses the TrainElement register (PEN
+##       codespace) as its cutoff to build rolling stock: train
+##       composition, block assignments, and timetable integration.
+##       Declares which references/elements it consumes and any
+##       cardinality tightening beyond the Nordic Profile.
+##
+## TrainElement is the register cutoff — its ownership is declared in
+## netex-entur.ttl (CodespacePEN). This service references it; it does
+## not master it.
 ##
 ## This is a system-scoped sub-profile — it documents what one service
 ## needs, not what the profile requires. Other services could have
 ## their own sub-profile files following the same pattern.
 ##
 ## Imports: netex-entur.ttl (Entur governance + codespaces)
-##          → netex-nordic.ttl → netex.ttl
+##          → netex-nordic.ttl → generated NeTEx base (netex:) + nordic vocab
 ##
 ## Generated: 2026-06-09
 ## -----------------------------------------------------------------
@@ -31,21 +37,13 @@
     owl:imports <https://entur.org/ontology> .
 
 ## =================================================================
-## META-CLASSES
-## =================================================================
-
-netex:SubProfile a owl:Class ;
-    rdfs:label "SubProfile" ;
-    skos:definition "A service-scoped subset of a profile, declaring what a specific system consumes/produces" .
-
-## =================================================================
 ## SERVICE DEFINITION
 ## =================================================================
 
-svc:RollingStockService a netex:SubProfile ;
+svc:RollingStockService a entur:SubProfile ;
     rdfs:label "Rolling Stock Service Profile" ;
     skos:definition "Sub-profile for rolling stock planning: train composition, block assignments, facilities, and timetable integration" ;
-    netex:basedOn profile:NP ;
+    entur:basedOn profile:NP ;
     svc:managedBy entur:PartnerPlass ;
     svc:codespace entur:CodespacePEN .
 
@@ -53,36 +51,36 @@ svc:RollingStockService a netex:SubProfile ;
 ## CONSUMED REFERENCES (reads from operator deliveries)
 ## =================================================================
 ## The service reads these references from incoming NeTEx data
-## to build its internal model.
+## to build its internal model. Property IRIs are the generated
+## base's shared lowerCamelCase references; the owning class is
+## carried by the generated owl:Restrictions rather than the IRI.
 ## -----------------------------------------------------------------
 
 svc:RollingStockService svc:consumes
     ## --- Timetable core ---
-    netex:ServiceJourney_JourneyPatternRef ,
-    netex:ServiceJourney_LineRef ,
-    netex:ServiceJourney_DayTypeRef ,
-    netex:ServiceJourney_passingTimes ,
-    netex:ServiceJourney_parts ,
-    netex:DatedServiceJourney_ServiceJourneyRef ,
-    netex:DatedServiceJourney_OperatingDayRef ,
-    netex:DatedServiceJourney_BlockRef ,
+    netex:journeyPatternRef ,
+    netex:lineRef ,
+    netex:dayTypeRef ,
+    netex:passingTimes ,
+    netex:parts ,
+    netex:serviceJourneyRef ,
+    netex:operatingDayRef ,
+    netex:blockRef ,
     ## --- Journey pattern / stops ---
-    netex:JourneyPattern_pointsInSequence ,
-    netex:StopPointInJourneyPattern_ScheduledStopPointRef ,
-    netex:PassengerStopAssignment_ScheduledStopPointRef ,
-    netex:PassengerStopAssignment_QuayRef ,
+    netex:pointsInSequence ,
+    netex:scheduledStopPointRef ,
+    netex:quayRef ,
     ## --- Block → composition ---
-    netex:TrainBlock_blockParts ,
-    netex:TrainBlockPart_CompoundTrainRef ,
-    netex:TrainBlockPart_JourneyPartRef ,
+    netex:blockParts ,
+    netex:compoundTrainRef ,
+    netex:journeyPartRef ,
     ## --- Train composition ---
-    netex:CompoundTrain_components ,
-    netex:TrainInCompoundTrain_TrainRef ,
-    netex:Train_components ,
-    netex:TrainComponent_TrainElementRef ,
+    netex:components ,
+    netex:trainRef ,
+    netex:trainElementRef ,
     ## --- JourneyPart ---
-    netex:JourneyPart_FromStopPointRef ,
-    netex:JourneyPart_ToStopPointRef .
+    netex:fromStopPointRef ,
+    netex:toStopPointRef .
 
 ## =================================================================
 ## CONSUMED ELEMENTS (reads data values)
@@ -90,31 +88,33 @@ svc:RollingStockService svc:consumes
 
 svc:RollingStockService svc:consumes
     ## --- Times ---
-    netex:TimetabledPassingTime_ArrivalTime ,
-    netex:TimetabledPassingTime_DepartureTime ,
+    netex:arrivalTime ,
+    netex:departureTime ,
     ## --- Mode ---
-    netex:ServiceJourney_TransportMode ,
-    netex:ServiceJourney_TransportSubmode ,
+    netex:transportMode ,
+    netex:transportSubmode ,
     ## --- Alteration ---
-    netex:DatedServiceJourney_ServiceAlteration ,
+    netex:serviceAlteration ,
     ## --- Boarding ---
-    netex:StopPointInJourneyPattern_ForBoarding ,
-    netex:StopPointInJourneyPattern_ForAlighting ,
+    netex:forBoarding ,
+    netex:forAlighting ,
     ## --- Train details ---
-    netex:TrainComponent_Label ,
-    netex:TrainComponent_OperationalOrientation ,
-    netex:Train_TypeOfFuel ,
+    netex:label ,
+    netex:operationalOrientation ,
+    netex:typeOfFuel ,
     ## --- Network ---
-    netex:Network_Name .
+    netex:name .
 
 ## =================================================================
-## PRODUCED DATA (PEN central registry)
+## CONSUMED REGISTER (TrainElement cutoff)
 ## =================================================================
-## The service masters TrainElement in the PEN codespace.
-## Operators reference these via TrainComponent → TrainElementRef.
+## TrainElement is the register cutoff: owned centrally (PEN codespace,
+## see netex-entur.ttl) and referenced here via TrainComponent →
+## TrainElementRef. This service uses it to build compositions; it does
+## not produce or version TrainElement.
 ## -----------------------------------------------------------------
 
-svc:RollingStockService svc:produces
+svc:RollingStockService svc:consumesRegister
     netex:TrainElement .
 
 ## =================================================================
@@ -157,7 +157,7 @@ svc:RS_DatedServiceJourneyShape a sh:NodeShape ;
     sh:targetClass netex:DatedServiceJourney ;
     rdfs:label "DatedServiceJourney — Rolling Stock constraints" ;
     sh:property [
-        sh:path netex:DatedServiceJourney_BlockRef ;
+        sh:path netex:blockRef ;
         sh:minCount 1 ; sh:maxCount 1 ;
         sh:class netex:TrainBlock ;
         sh:name "BlockRef" ;
@@ -168,7 +168,7 @@ svc:RS_TrainComponentShape a sh:NodeShape ;
     sh:targetClass netex:TrainComponent ;
     rdfs:label "TrainComponent — Rolling Stock constraints" ;
     sh:property [
-        sh:path netex:TrainComponent_TrainElementRef ;
+        sh:path netex:trainElementRef ;
         sh:minCount 1 ; sh:maxCount 1 ;
         sh:class netex:TrainElement ;
         sh:name "TrainElementRef" ;
@@ -179,7 +179,7 @@ svc:RS_TrainInCompoundTrainShape a sh:NodeShape ;
     sh:targetClass netex:TrainInCompoundTrain ;
     rdfs:label "TrainInCompoundTrain — Rolling Stock constraints" ;
     sh:property [
-        sh:path netex:TrainInCompoundTrain_TrainRef ;
+        sh:path netex:trainRef ;
         sh:minCount 1 ; sh:maxCount 1 ;
         sh:class netex:Train ;
         sh:name "TrainRef" ;
