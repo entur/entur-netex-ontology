@@ -35,7 +35,7 @@
 produkt:ProductService a entur:SubProfile ;
     rdfs:label "Produkt — Product Service Profile (skeleton)" ;
     skos:definition "Sub-profile for the product catalogue (fare products, sales offers). Skeleton — constraints to be confirmed." ;
-    entur:basedOn profile:NP .
+    entur:basedOn profile:EnturProfile .
 
 ## =================================================================
 ## OBJECTS IN SCOPE (provisional)

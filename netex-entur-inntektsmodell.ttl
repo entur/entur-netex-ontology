@@ -36,7 +36,7 @@
 inntekt:IncomeModelService a entur:SubProfile ;
     rdfs:label "Inntektsmodell — Income Model Service Profile (skeleton)" ;
     skos:definition "Sub-profile for the income/revenue model. Initial scope: Østlandet. Skeleton — constraints to be confirmed." ;
-    entur:basedOn profile:NP ;
+    entur:basedOn profile:EnturProfile ;
     inntekt:initialScope "Østlandet" .
 
 ## =================================================================
