@@ -17,13 +17,97 @@
 
 @prefix netex:   <https://netex-cen.eu/ontology#> .
 @prefix entur:   <https://entur.org/ontology#> .
+@prefix nordic:  <https://netex-cen.eu/nordic#> .
+@prefix profile: <https://netex-cen.eu/profile#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
 
 ## --- Import Nordic Profile ---
 <https://entur.org/ontology> a owl:Ontology ;
-    owl:imports <https://netex-cen.eu/profile/nordic> .
+    owl:imports <https://netex-cen.eu/profile/nordic> ,
+                <https://netex-cen.eu/profile/nordic-baseline> .
+
+## Entur reuses the Nordic allowlist and adds Entur-specific membership.
+## The generic inheritance relation is defined upstream; Nordic does not
+## refer to this downstream profile.
+profile:EnturProfile a profile:Scope , nordic:Profile ;
+    rdfs:label "Entur Profile" ;
+    nordic:extendsProfile profile:NP .
+
+## Entur additions to the inherited Nordic allowlist. The corresponding
+## ProfileMember field definitions are kept in the shared baseline and are
+## included here through the baseline import above.
+netex:CompoundTrain nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:Contract nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:DatedServiceJourney nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:FareContract nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:FareZone nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:Train nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:TrainBlock nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+
+## Structural delivery vocabulary used by Entur NeTEx exports. These are
+## standard NeTEx wrapper/frame classes, but are not currently members of
+## the Nordic positive allowlist.
+netex:PublicationDelivery nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:ParticipantRef nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:CompositeFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:ResourceFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:SiteFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:ServiceFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:ServiceCalendarFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:TimetableFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:VehicleScheduleFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:FareFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:SalesTransactionFrame nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:TrainComponent nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:TrainInCompoundTrain_VersionedChildStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+
+## Generated containment wrappers for the delivery and frame contents.
+## Names ending in _RelStructure are NeTEx classes, not properties; they
+## carry the XML list/containment semantics for properties such as
+## netex:stopPlaces and netex:dataObjects.
+netex:dataObjects_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:frames_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:topographicPlaces_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:quays_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:stopPlaces_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:scheduledStopPointsInFrame_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:stopPlacesInFrame_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:trainComponents_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:blockParts_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
+netex:journeysInFrame_RelStructure nordic:inProfile profile:EnturProfile ;
+    nordic:provenance nordic:Baseline .
 
 ## =================================================================
 ## META-CLASSES (entur vocabulary)
@@ -46,6 +130,45 @@ entur:SubProfile a owl:Class ;
 entur:basedOn a owl:ObjectProperty ;
     rdfs:label "basedOn" ;
     skos:definition "Relates an Entur sub-profile to the Nordic Profile it constrains further" .
+
+## DatedServiceJourney is an Entur implementation concern, not a shared
+## Nordic Profile commitment. Keep its common constraints here; service
+## profiles may tighten them further (for example with blockRef).
+##
+## This is a profile/scope relationship, not an RDF type relationship.
+## rdfs:subClassOf would assert that one set of NeTEx instances is a
+## semantic subtype of another. Entur instead reuses the same NeTEx class
+## and applies a stricter validation profile to it.
+## =================================================================
+## ENTUR PROFILE CONSTRAINTS
+## =================================================================
+
+entur:ENT_DatedServiceJourneyShape a sh:NodeShape ;
+    sh:targetClass netex:DatedServiceJourney ;
+    rdfs:label "DatedServiceJourney — Entur constraints" ;
+    sh:property [
+        sh:path netex:serviceJourneyRef ;
+        sh:name "ServiceJourneyRef" ;
+        sh:description "Reference to the template ServiceJourney this dated instance realizes" ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] , [
+        sh:path netex:operatingDayRef ;
+        sh:name "OperatingDayRef" ;
+        sh:description "The specific operating day this journey runs on" ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] , [
+        sh:path netex:datedVehicleJourneyRef ;
+        sh:name "DatedVehicleJourneyRef" ;
+        sh:description "Deviation/replacement tracking used by Entur"
+    ] , [
+        sh:path netex:serviceAlteration ;
+        sh:name "ServiceAlteration" ;
+        sh:description "Alteration status code when journey deviates from plan" ;
+        sh:maxCount 1 ;
+        sh:in ( "planned" "cancellation" "replaced" "extraJourney" )
+    ] .
 
 ## =================================================================
 ## DATA GOVERNANCE

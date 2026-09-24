@@ -26,3 +26,6 @@ jobs:
         run: |
           python3 -m pip install --quiet rdflib
           python3 scripts/validate_ttl.py netex-entur*.ttl
+
+      - name: Valider profilinheritance og effektiv allowlist
+        run: python3 scripts/validate_profile_inheritance.py
