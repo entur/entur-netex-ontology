@@ -48,7 +48,7 @@
 inv:InventoryService a entur:SubProfile ;
     rdfs:label "Inventory — Inventory Service Profile" ;
     skos:definition "Sub-profile for the Inventory service (Varelager): quota allocation across a departure and its ordered stops. A quota is a limit on reservable instances, tied to a departure; an Inventory construct, not a native NeTEx object; independent of rolling stock composition." ;
-    entur:basedOn profile:NP ;
+    entur:basedOn profile:EnturProfile ;
     inv:independentOf <https://entur.org/service/rolling-stock> ;
     inv:requiresVehicleData false .
 

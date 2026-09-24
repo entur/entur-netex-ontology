@@ -30,11 +30,12 @@ NORDIC_SCOPE = URIRef(f"{PROFILE}NordicProfile")
 
 def load_graph() -> Graph:
     graph = Graph()
-    paths = sorted(glob.glob("nordic-netex-ontology/*.ttl"))
-    paths += sorted(glob.glob("nordic-netex-ontology/base/*.ttl"))
-    paths += sorted(glob.glob("netex-entur*.ttl"))
-    if not paths:
-        raise FileNotFoundError("fant ingen ontology-filer")
+    nordic_paths = sorted(glob.glob("nordic-netex-ontology/*.ttl"))
+    base_paths = sorted(glob.glob("nordic-netex-ontology/base/*.ttl"))
+    entur_paths = sorted(glob.glob("netex-entur*.ttl"))
+    if not base_paths or not entur_paths:
+        raise FileNotFoundError("fant ikke nødvendige Nordic-base- eller Entur-filer")
+    paths = nordic_paths + base_paths + entur_paths
     for path in paths:
         graph.parse(path, format="turtle")
     return graph

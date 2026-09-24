@@ -59,14 +59,17 @@ def main() -> int:
         return 2
 
     composed = Graph()
+    nordic_graph = Graph()
     try:
-        for path in base + entur_files:
+        for path in base:
+            nordic_graph.parse(path, format="turtle")
+        for path in entur_files:
             composed.parse(path, format="turtle")
     except Exception as exc:
         # En manglende/ugyldig base gir INGEN definisjoner, ikke et «rent» sett.
         print(f"ERROR: kunne ikke bygge komponert graf: {exc}", file=sys.stderr)
         return 2
-    defined = {s for s in composed.subjects() if isinstance(s, URIRef)}
+    defined = {s for s in nordic_graph.subjects() if isinstance(s, URIRef)}
 
     referenced = set()
     try:

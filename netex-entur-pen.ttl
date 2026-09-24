@@ -44,7 +44,7 @@
 pen:RollingStockRegistry a entur:SubProfile ;
     rdfs:label "PEN — National Rolling Stock Registry (NeTEx alignment)" ;
     skos:definition "Alignment profile for the PEN rolling stock registry (Partner/Plass): a register of units aligned with NeTEx TrainElement, each linked to a seat map. Not currently a NeTEx import/export interface." ;
-    entur:basedOn profile:NP ;
+    entur:basedOn profile:EnturProfile ;
     pen:managedBy entur:CodespacePEN ;
     pen:netexInterface pen:AlignedNoIO .
 
