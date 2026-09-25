@@ -147,9 +147,9 @@ entur:ENT_DatedServiceJourneyShape a sh:NodeShape ;
     sh:targetClass netex:DatedServiceJourney ;
     rdfs:label "DatedServiceJourney — Entur constraints" ;
     sh:property [
-        sh:path netex:serviceJourneyRef ;
+        sh:path netex:journeyRef ;
         sh:name "ServiceJourneyRef" ;
-        sh:description "Reference to the template ServiceJourney this dated instance realizes" ;
+        sh:description "Reference to the template journey this dated instance realizes" ;
         sh:minCount 1 ;
         sh:maxCount 1
     ] , [
