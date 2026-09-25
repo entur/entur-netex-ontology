@@ -138,7 +138,7 @@ svc:RollingStockService svc:requiresClass
     netex:TrainBlock ,
     netex:TrainBlockPart ,
     netex:CompoundTrain ,
-    netex:TrainInCompoundTrain ,
+    netex:TrainInCompoundTrain_VersionedChildStructure ,
     netex:Train ,
     netex:TrainComponent ,
     netex:TrainElement .
@@ -176,7 +176,7 @@ svc:RS_TrainComponentShape a sh:NodeShape ;
     ] .
 
 svc:RS_TrainInCompoundTrainShape a sh:NodeShape ;
-    sh:targetClass netex:TrainInCompoundTrain ;
+    sh:targetClass netex:TrainInCompoundTrain_VersionedChildStructure ;
     rdfs:label "TrainInCompoundTrain — Rolling Stock constraints" ;
     sh:property [
         sh:path netex:trainRef ;
