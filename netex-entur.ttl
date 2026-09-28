@@ -36,9 +36,10 @@ profile:EnturProfile a profile:Scope , nordic:Profile ;
     rdfs:label "Entur Profile" ;
     nordic:extendsProfile profile:NP .
 
-## Entur additions to the inherited Nordic allowlist. The corresponding
-## ProfileMember field definitions are kept in the shared baseline and are
-## included here through the baseline import above.
+## Entur additions to the inherited Nordic allowlist. These 7 classes are
+## Entur-only (not part of the shared Nordic Profile), so their ProfileMember
+## field definitions are owned directly here rather than in the shared
+## baseline — see the section below.
 netex:CompoundTrain nordic:inProfile profile:EnturProfile ;
     nordic:provenance nordic:Baseline .
 netex:Contract nordic:inProfile profile:EnturProfile ;
@@ -53,6 +54,394 @@ netex:Train nordic:inProfile profile:EnturProfile ;
     nordic:provenance nordic:Baseline .
 netex:TrainBlock nordic:inProfile profile:EnturProfile ;
     nordic:provenance nordic:Baseline .
+
+## =================================================================
+## Entur-only baseline members (moved from shared Nordic baseline)
+## =================================================================
+## Field-level nordic:ProfileMember data for the 7 Entur-only classes
+## above. Previously lived in nordic-netex-ontology/netex-nordic-baseline.ttl;
+## relocated here because these classes are not part of the shared Nordic
+## Profile and do not belong in a shared "Nordic" baseline.
+
+## --- CompoundTrain (EnturProfile) ---
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:CompoundTrain ;
+    nordic:element "@id" ;
+    nordic:path "CompoundTrain/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:CompoundTrain ;
+    nordic:element "@version" ;
+    nordic:path "CompoundTrain/@version" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:CompoundTrain ;
+    nordic:element "Name" ;
+    nordic:path "CompoundTrain/Name" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:CompoundTrain ;
+    nordic:element "components" ;
+    nordic:path "CompoundTrain/components" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:CompoundTrain ;
+    nordic:element "TrainInCompoundTrain/@id" ;
+    nordic:path "CompoundTrain/components/TrainInCompoundTrain/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:CompoundTrain ;
+    nordic:element "@order" ;
+    nordic:path "CompoundTrain/components/TrainInCompoundTrain/@order" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:CompoundTrain ;
+    nordic:element "Train@ref" ;
+    nordic:path "CompoundTrain/components/TrainInCompoundTrain/TrainRef/@ref" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:CompoundTrain ;
+    nordic:element "Label" ;
+    nordic:path "CompoundTrain/components/TrainInCompoundTrain/Label" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+
+## --- Contract (EnturProfile) ---
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Contract ;
+    nordic:element "@id" ;
+    nordic:path "Contract/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Contract ;
+    nordic:element "@version" ;
+    nordic:path "Contract/@version" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Contract ;
+    nordic:element "Name" ;
+    nordic:path "Contract/Name" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Contract ;
+    nordic:element "ContractType" ;
+    nordic:path "Contract/ContractType" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Contract ;
+    nordic:element "LegalStatus" ;
+    nordic:path "Contract/LegalStatus" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Contract ;
+    nordic:element "ContractGoverningLaw" ;
+    nordic:path "Contract/ContractGoverningLaw" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Contract ;
+    nordic:element "Authority@ref" ;
+    nordic:path "Contract/contractees/OrganisationRef/@ref" ;
+    nordic:cardinality "0..n" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Contract ;
+    nordic:element "Operator@ref" ;
+    nordic:path "Contract/contractors/OrganisationRef/@ref" ;
+    nordic:cardinality "0..n" ;
+    nordic:provenance nordic:Baseline .
+
+## --- DatedServiceJourney (EnturProfile) ---
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:DatedServiceJourney ;
+    nordic:element "@id" ;
+    nordic:path "DatedServiceJourney/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:DatedServiceJourney ;
+    nordic:element "@version" ;
+    nordic:path "DatedServiceJourney/@version" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:DatedServiceJourney ;
+    nordic:element "Journey/@ref" ;
+    nordic:path "journeyRef" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:DatedServiceJourney ;
+    nordic:element "OperatingDay/@ref" ;
+    nordic:path "operatingDayRef" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:DatedServiceJourney ;
+    nordic:element "TrainBlock/@ref" ;
+    nordic:path "BlockRef/@ref" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:DatedServiceJourney ;
+    nordic:element "ServiceAlteration" ;
+    nordic:path "ServiceAlteration" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:DatedServiceJourney ;
+    nordic:element "replacedJourneys" ;
+    nordic:path "replacedJourneys" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:DatedServiceJourney ;
+    nordic:element "DatedVehicleJourney/@ref" ;
+    nordic:path "replacedJourneys/DatedVehicleJourneyRef/@ref" ;
+    nordic:cardinality "0..n" ;
+    nordic:provenance nordic:Baseline .
+
+## --- FareContract (EnturProfile — fare profile still a draft) ---
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareContract ;
+    nordic:element "@id" ;
+    nordic:path "FareContract/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareContract ;
+    nordic:element "@version" ;
+    nordic:path "FareContract/@version" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareContract ;
+    nordic:element "TypeOfFareContractRef/@ref" ;
+    nordic:path "FareContract/TypeOfFareContractRef/@ref" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareContract ;
+    nordic:element "CustomerAccountRef/@ref" ;
+    nordic:path "FareContract/CustomerAccountRef/@ref" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareContract ;
+    nordic:element "FareContractEntry/@id" ;
+    nordic:path "FareContract/fareContractEntries/FareContractEntry/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareContract ;
+    nordic:element "FareContractEntry/@version" ;
+    nordic:path "FareContract/fareContractEntries/FareContractEntry/@version" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareContract ;
+    nordic:element "CustomerPurchasePackageRef/@ref" ;
+    nordic:path "FareContract/fareContractEntries/FareContractEntry/CustomerPurchasePackageRef/@ref" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareContract ;
+    nordic:element "TravelSpecificationRef/@ref" ;
+    nordic:path "FareContract/fareContractEntries/FareContractEntry/TravelSpecificationRef/@ref" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+
+## --- FareZone (EnturProfile — fare profile still a draft) ---
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareZone ;
+    nordic:element "@id" ;
+    nordic:path "FareZone/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareZone ;
+    nordic:element "@version" ;
+    nordic:path "FareZone/@version" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareZone ;
+    nordic:element "Name" ;
+    nordic:path "FareZone/Name" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareZone ;
+    nordic:element "Description" ;
+    nordic:path "FareZone/Description" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareZone ;
+    nordic:element "members" ;
+    nordic:path "FareZone/members" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:FareZone ;
+    nordic:element "ScheduledStopPoint/@ref" ;
+    nordic:path "FareZone/members/ScheduledStopPointRef/@ref" ;
+    nordic:cardinality "0..n" ;
+    nordic:provenance nordic:Baseline .
+
+## --- Train (EnturProfile) ---
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "@id" ;
+    nordic:path "Train/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "@version" ;
+    nordic:path "Train/@version" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "Name" ;
+    nordic:path "Train/Name" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "TrainSize" ;
+    nordic:path "Train/TrainSize" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "NumberOfCars" ;
+    nordic:path "Train/TrainSize/NumberOfCars" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "TrainSizeType" ;
+    nordic:path "Train/TrainSize/TrainSizeType" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "components" ;
+    nordic:path "Train/components" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "TrainComponent/@id" ;
+    nordic:path "Train/components/TrainComponent/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "@order" ;
+    nordic:path "Train/components/TrainComponent/@order" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "Label" ;
+    nordic:path "Train/components/TrainComponent/Label" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "TrainElement/@id" ;
+    nordic:path "Train/components/TrainComponent/TrainElement/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "TrainElementType" ;
+    nordic:path "Train/components/TrainComponent/TrainElement/TrainElementType" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "FareClasses" ;
+    nordic:path "Train/components/TrainComponent/TrainElement/FareClasses" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "SeatingCapacity" ;
+    nordic:path "Train/components/TrainComponent/TrainElement/PassengerCapacity/SeatingCapacity" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:Train ;
+    nordic:element "StandingCapacity" ;
+    nordic:path "Train/components/TrainComponent/TrainElement/PassengerCapacity/StandingCapacity" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+
+## --- TrainBlock (EnturProfile) ---
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:TrainBlock ;
+    nordic:element "@id" ;
+    nordic:path "Block/@id" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:TrainBlock ;
+    nordic:element "@version" ;
+    nordic:path "Block/@version" ;
+    nordic:cardinality "1..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:TrainBlock ;
+    nordic:element "Name" ;
+    nordic:path "Block/Name" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:TrainBlock ;
+    nordic:element "Description" ;
+    nordic:path "Block/Description" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:TrainBlock ;
+    nordic:element "Operator@ref" ;
+    nordic:path "Block/OperatorRef/@ref" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+[] a nordic:ProfileMember ;
+    nordic:onClass netex:TrainBlock ;
+    nordic:element "journeys" ;
+    nordic:path "Block/journeys" ;
+    nordic:cardinality "0..1" ;
+    nordic:provenance nordic:Baseline .
+
+## Entur-scoped replacement for the shared nordic:OrganisationChain, which
+## referenced netex:Contract (Entur-only) and does not belong in the shared
+## Nordic repo. Dropped from netex-nordic.ttl upstream; owned here instead.
+entur:OrganisationChain rdfs:comment """
+    Authority → Contract → Operator → ResponsibilitySet
+    Organisational governance and responsibility.
+""" ;
+    nordic:step1 netex:Authority ;
+    nordic:step2 netex:Contract ;
+    nordic:step3 netex:Operator ;
+    nordic:step4 netex:ResponsibilitySet .
 
 ## Structural delivery vocabulary used by Entur NeTEx exports. These are
 ## standard NeTEx wrapper/frame classes, but are not currently members of
