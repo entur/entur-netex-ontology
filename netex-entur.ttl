@@ -559,6 +559,20 @@ entur:ENT_DatedServiceJourneyShape a sh:NodeShape ;
         sh:in ( "planned" "cancellation" "replaced" "extraJourney" )
     ] .
 
+## FareZone is Entur-only (not part of the shared Nordic Profile). This
+## shape replaces the former profile:NP_FareZoneShape, which wrongly lived
+## in the shared netex-nordic.ttl.
+entur:ENT_FareZoneShape a sh:NodeShape ;
+    sh:targetClass netex:FareZone ;
+    rdfs:label "FareZone — Entur constraints" ;
+    sh:property [
+        sh:path netex:name ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:name "Name" ;
+        sh:description "XSD allows 0..1, Entur mandates 1..1"
+    ] .
+
 ## =================================================================
 ## DATA GOVERNANCE
 ## =================================================================
