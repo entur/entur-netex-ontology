@@ -7,7 +7,8 @@ name: ontology-ingest
 # Differensiell referanseintegritet og profilmedlemskap avgjør ruten. Nye eller
 # fjernede Nordic-medlemmer vises eksplisitt i PR-en og krever menneskelig
 # gjennomgang, siden de automatisk inngår i Entur gjennom profilinheritance.
-# Kun endringer uten profilmedlemskapsendringer eller brutte koblinger auto-merges.
+# Kun endringer uten Nordic TTL-endringer, profilmedlemskapsendringer eller brutte
+# koblinger auto-merges.
 #
 # Kjøres 05:45 UTC, altså noen minutter FØR nordic-netex-documentation sin
 # ontology-ingest (06:00 UTC). Slik rekker pinnen her å flytte seg først, så
