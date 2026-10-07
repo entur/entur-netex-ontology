@@ -4,11 +4,11 @@ name: ontology-ingest
 # flytter seg. Entur-ontologien bygger PÅ det nordiske fundamentet — en
 # oppstrøms-endring er et signal om at Entur-lagene kan trenge oppdatering.
 #
-# En differensiell referanse-integritetssjekk avgjør ruten: bryter bumpen INGEN
-# eksisterende kobling (kun tightening / additive endringer) aktiveres auto-merge
-# på PR-en (full sporbarhet). Forsvinner en referert klasse/property blir PR-en
-# holdt tilbake for menneskelig gjennomgang. Fail-safe: enhver feil = ingen
-# auto-merge.
+# Differensiell referanseintegritet og profilmedlemskap avgjør ruten. Nye eller
+# fjernede Nordic-medlemmer vises eksplisitt i PR-en og krever menneskelig
+# gjennomgang, siden de automatisk inngår i Entur gjennom profilinheritance.
+# Kun endringer uten Nordic TTL-endringer, profilmedlemskapsendringer eller brutte
+# koblinger auto-merges.
 #
 # Kjøres 05:45 UTC, altså noen minutter FØR nordic-netex-documentation sin
 # ontology-ingest (06:00 UTC). Slik rekker pinnen her å flytte seg først, så
@@ -31,7 +31,7 @@ permissions:
   # labels settes via Issues API av create-pull-request
   issues: write
   # bot-PR-en trigger ikke validate-workflowen (GITHUB_TOKEN), så vi rapporterer
-  # den påkrevde "validate"-statusen selv basert på coupling-resultatet.
+  # den påkrevde "validate"-statusen selv basert på profil- og coupling-resultatet.
   statuses: write
 
 jobs:
@@ -88,11 +88,14 @@ jobs:
             exit 0
           fi
 
+          python3 scripts/validate_profile_inheritance.py --list-nordic-members > "$RUNNER_TEMP/nordic_members_new.txt" && rc_members_new=0 || rc_members_new=$?
+
           # Skiller «kjørte» (rc 0/1) fra «kunne ikke kjøre» (rc >= 2). En krasj
           # (manglende/ugyldig base) er IKKE et tomt dangling-sett. Mønsteret
           # `cmd && a || b` fanger exit-koden uten at `set -e` avbryter steget.
           python3 scripts/validate_couplings.py > "$RUNNER_TEMP/dangling_new.txt" && rc_new=0 || rc_new=$?
           git -C nordic-netex-ontology checkout --quiet "$OLD_SHA"
+          python3 scripts/validate_profile_inheritance.py --list-nordic-members > "$RUNNER_TEMP/nordic_members_old.txt" && rc_members_old=0 || rc_members_old=$?
           python3 scripts/validate_couplings.py > "$RUNNER_TEMP/dangling_old.txt" && rc_old=0 || rc_old=$?
           git -C nordic-netex-ontology checkout --quiet "$NEW_SHA"
 
@@ -108,7 +111,42 @@ jobs:
             exit 0
           fi
 
+          if [ "$rc_members_new" -ne 0 ] || [ "$rc_members_old" -ne 0 ]; then
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            { echo "newly<<EOF"
+              echo "Kunne ikke sammenligne Nordic-profilmedlemskap (rc_new=$rc_members_new, rc_old=$rc_members_old)."
+              echo "EOF"; } >> "$GITHUB_OUTPUT"
+            echo "Nordic-medlemskap kunne ikke sammenlignes — needs-review."
+            exit 0
+          fi
+
+          git -C nordic-netex-ontology diff --name-only "$OLD_SHA" "$NEW_SHA" -- '*.ttl' > "$RUNNER_TEMP/nordic_ttl_files.txt" && rc_nordic_ttl=0 || rc_nordic_ttl=$?
+          if [ "$rc_nordic_ttl" -ne 0 ]; then
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            { echo "newly<<EOF"
+              echo "Kunne ikke sammenligne Nordic ontology TTL-filer (rc=$rc_nordic_ttl)."
+              echo "EOF"; } >> "$GITHUB_OUTPUT"
+            echo "Nordic TTL-endringer kunne ikke sammenlignes — needs-review."
+            exit 0
+          fi
+
           newly="$(comm -13 <(sort "$RUNNER_TEMP/dangling_old.txt") <(sort "$RUNNER_TEMP/dangling_new.txt"))"
+          nordic_added="$(comm -13 <(sort "$RUNNER_TEMP/nordic_members_old.txt") <(sort "$RUNNER_TEMP/nordic_members_new.txt"))"
+          nordic_removed="$(comm -23 <(sort "$RUNNER_TEMP/nordic_members_old.txt") <(sort "$RUNNER_TEMP/nordic_members_new.txt"))"
+          if [ -n "$nordic_added" ]; then
+            newly="${newly}${newly:+$'\n'}Nye Nordic-medlemmer (arves automatisk av Entur):"
+            newly="${newly}"$'\n'"$nordic_added"
+          fi
+          if [ -n "$nordic_removed" ]; then
+            newly="${newly}${newly:+$'\n'}Fjernede Nordic-medlemmer (krever vurdering i Entur):"
+            newly="${newly}"$'\n'"$nordic_removed"
+          fi
+          nordic_ttl_files="$(cat "$RUNNER_TEMP/nordic_ttl_files.txt")"
+          if [ -n "$nordic_ttl_files" ]; then
+            newly="${newly}${newly:+$'\n'}Endrede Nordic ontology TTL-filer:"
+            newly="${newly}"$'\n'"$nordic_ttl_files"
+          fi
+
           if [ "$rc_profile" -eq 1 ]; then
             profile_report="$(cat "$RUNNER_TEMP/profile_new.txt")"
             newly="${newly}${newly:+$'\n'}Profilinheritance-sjekken fant redundante Entur-medlemskap:\n${profile_report}"
@@ -116,11 +154,11 @@ jobs:
 
           if [ -z "$newly" ]; then
             echo "ok=true" >> "$GITHUB_OUTPUT"
-            echo "Ingen nye brutte koblinger eller redundante Entur-medlemskap — bumpen er trygg."
+            echo "Ingen Nordic TTL-endringer, nye brutte koblinger eller redundante Entur-medlemskap — bumpen er trygg."
           else
             echo "ok=false" >> "$GITHUB_OUTPUT"
             { echo "newly<<EOF"; echo "$newly"; echo "EOF"; } >> "$GITHUB_OUTPUT"
-            echo "Nye brutte koblinger:"; echo "$newly"
+            echo "Forhold som krever gjennomgang:"; echo "$newly"
           fi
 
       - name: Bygg PR-tekst
@@ -142,9 +180,9 @@ jobs:
             echo ""
             echo "---"
             if [ "$OK" = "true" ]; then
-              echo "✅ **Profil og koblinger validert:** ingen refererte klasser/properties forsvant, og ingen redundante Entur-medlemskap ble funnet. Auto-merge aktivert."
+              echo "✅ **Profil og koblinger validert:** ingen Nordic TTL-endringer, brutte referanser eller redundante Entur-medlemskap. Auto-merge aktivert."
             else
-              echo "⛔ **Profil-/koblingsendringer — krever gjennomgang.** Følgende forhold må håndteres før auto-merge:"
+              echo "⛔ **Nordic-profil-/koblingsendringer — krever gjennomgang.** Følgende klasser eller koblinger må vurderes før merge:"
               echo ""
               echo '```'
               echo "$NEWLY"
@@ -169,7 +207,7 @@ jobs:
             ${{ steps.validate.outputs.ok == 'true' && 'auto-merge' || 'needs-review' }}
           delete-branch: true
 
-      - name: Rapporter "validate"-status på bot-PR (kobling = gate)
+      - name: Rapporter "validate"-status på bot-PR (profil og koblinger = gate)
         if: steps.diff.outputs.changed == 'true' && steps.cpr.outputs.pull-request-head-sha
         env:
           GH_TOKEN: ${{ github.token }}
@@ -180,7 +218,7 @@ jobs:
           gh api --method POST "repos/${{ github.repository }}/statuses/$SHA" \
             -f state="$state" \
             -f context="validate" \
-            -f description="coupling gate: ok=$OK"
+            -f description="profile and coupling gate: ok=$OK"
 
       - name: Aktiver auto-merge (grønt)
         if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.ok == 'true' && steps.cpr.outputs.pull-request-number

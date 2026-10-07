@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Validate effective profile membership across profile inheritance.
 
-The Nordic baseline keeps its nordic:inProfile declarations. Entur additions
-are scoped with profile:scope, so Entur-authored terms do not look like Nordic
-membership declarations.
+The Nordic baseline and Entur additions both use profile:scope, with each
+profile resource serving as its own scope value. Entur inherits Nordic through
+nordic:extendsProfile.
 
 Exit codes:
   0  inheritance is valid and Entur has no redundant additions
   1  a redundant addition or an invalid profile relation was found
   2  the composed profile graph could not be built
 """
+import argparse
 import glob
 import sys
 
@@ -27,9 +28,7 @@ SCOPE = URIRef(f"{PROFILE}scope")
 PROFILE_SCOPE_CLASS = URIRef(f"{PROFILE}Scope")
 ENTUR_PROFILE_MEMBER = URIRef(f"{ENTUR}ProfileMember")
 ENTUR_ON_CLASS = URIRef(f"{ENTUR}onClass")
-# The current Nordic baseline uses profile:NordicProfile for membership while
-# profile:NP is the profile instance used by downstream inheritance.
-NORDIC_SCOPE = URIRef(f"{PROFILE}NordicProfile")
+LEGACY_NORDIC_SCOPE = URIRef(f"{PROFILE}NordicProfile")
 
 
 def load_graph() -> Graph:
@@ -81,6 +80,14 @@ def scoped_members(graph: Graph, scope: URIRef) -> set[URIRef]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Validate effective profile membership.")
+    parser.add_argument(
+        "--list-nordic-members",
+        action="store_true",
+        help="Print the inherited Nordic member IRIs, one per line.",
+    )
+    args = parser.parse_args()
+
     try:
         graph = load_graph()
     except Exception as exc:
@@ -109,7 +116,16 @@ def main() -> int:
 
     profile_chain = inherited_profiles(graph, ENTUR_PROFILE)
     parent_profiles = set(profile_chain[1:])
-    inherited = members(graph, parent_profiles | {NORDIC_SCOPE})
+    inherited = (
+        members(graph, parent_profiles | {LEGACY_NORDIC_SCOPE})
+        | scoped_members(graph, NP)
+    )
+
+    if args.list_nordic_members:
+        for member in sorted(inherited, key=str):
+            print(str(member))
+        return 0
+
     additions = scoped_members(graph, ENTUR_PROFILE)
 
     undeclared_classes = sorted(
