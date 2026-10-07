@@ -97,7 +97,9 @@ def main() -> int:
         print("ERROR: profile:Entur er ikke deklarert som profile:Scope", file=sys.stderr)
         return 1
 
-    legacy_additions = members(graph, {ENTUR_PROFILE})
+    legacy_additions = members(
+        graph, {ENTUR_PROFILE, URIRef(f"{PROFILE}EnturProfile")}
+    )
     if legacy_additions:
         print(
             "ERROR: Entur-klasser bruker fortsatt nordic:inProfile; bruk profile:scope",
