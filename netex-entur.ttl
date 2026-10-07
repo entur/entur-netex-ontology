@@ -33,13 +33,9 @@
 ## Entur reuses the Nordic profile through inheritance and declares its
 ## additional classes with profile:scope. Nordic does not refer to this
 ## downstream profile.
-profile:EnturProfile a nordic:Profile ;
+profile:Entur a profile:Scope , nordic:Profile ;
     rdfs:label "Entur Profile" ;
     nordic:extendsProfile profile:NP .
-
-profile:Entur a profile:Scope ;
-    rdfs:label "Entur" ;
-    skos:definition "Scope for classes added by the Entur profile" .
 
 ## Entur-owned vocabulary for field-level profile declarations. The Nordic
 ## baseline keeps using nordic:ProfileMember; these terms describe only the
@@ -101,7 +97,7 @@ netex:TrainBlock profile:scope profile:Entur ;
 ## =================================================================
 ## Field-level entur:ProfileMember data for the Entur additions above.
 
-## --- CompoundTrain (EnturProfile) ---
+## --- CompoundTrain (Entur) ---
 [] a entur:ProfileMember ;
     entur:onClass netex:CompoundTrain ;
     entur:element "@id" ;
@@ -151,7 +147,7 @@ netex:TrainBlock profile:scope profile:Entur ;
     entur:cardinality "0..1" ;
     entur:provenance entur:Baseline .
 
-## --- Contract (EnturProfile) ---
+## --- Contract (Entur) ---
 [] a entur:ProfileMember ;
     entur:onClass netex:Contract ;
     entur:element "@id" ;
@@ -201,7 +197,7 @@ netex:TrainBlock profile:scope profile:Entur ;
     entur:cardinality "0..n" ;
     entur:provenance entur:Baseline .
 
-## --- DatedServiceJourney (EnturProfile) ---
+## --- DatedServiceJourney (Entur) ---
 [] a entur:ProfileMember ;
     entur:onClass netex:DatedServiceJourney ;
     entur:element "@id" ;
@@ -251,7 +247,7 @@ netex:TrainBlock profile:scope profile:Entur ;
     entur:cardinality "0..n" ;
     entur:provenance entur:Baseline .
 
-## --- FareContract (EnturProfile — fare profile still a draft) ---
+## --- FareContract (Entur — fare profile still a draft) ---
 [] a entur:ProfileMember ;
     entur:onClass netex:FareContract ;
     entur:element "@id" ;
@@ -301,7 +297,7 @@ netex:TrainBlock profile:scope profile:Entur ;
     entur:cardinality "0..1" ;
     entur:provenance entur:Baseline .
 
-## --- FareZone (EnturProfile — fare profile still a draft) ---
+## --- FareZone (Entur — fare profile still a draft) ---
 [] a entur:ProfileMember ;
     entur:onClass netex:FareZone ;
     entur:element "@id" ;
@@ -339,7 +335,7 @@ netex:TrainBlock profile:scope profile:Entur ;
     entur:cardinality "0..n" ;
     entur:provenance entur:Baseline .
 
-## --- Train (EnturProfile) ---
+## --- Train (Entur) ---
 [] a entur:ProfileMember ;
     entur:onClass netex:Train ;
     entur:element "@id" ;
@@ -431,7 +427,7 @@ netex:TrainBlock profile:scope profile:Entur ;
     entur:cardinality "0..1" ;
     entur:provenance entur:Baseline .
 
-## --- TrainBlock (EnturProfile) ---
+## --- TrainBlock (Entur) ---
 [] a entur:ProfileMember ;
     entur:onClass netex:TrainBlock ;
     entur:element "@id" ;

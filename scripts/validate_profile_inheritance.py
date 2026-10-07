@@ -22,8 +22,7 @@ EXTENDS = URIRef(f"{NORDIC}extendsProfile")
 IN_PROFILE = URIRef(f"{NORDIC}inProfile")
 PROFILE_CLASS = URIRef(f"{NORDIC}Profile")
 NP = URIRef(f"{PROFILE}NP")
-ENTUR_PROFILE = URIRef(f"{PROFILE}EnturProfile")
-ENTUR_SCOPE = URIRef(f"{PROFILE}Entur")
+ENTUR_PROFILE = URIRef(f"{PROFILE}Entur")
 SCOPE = URIRef(f"{PROFILE}scope")
 PROFILE_SCOPE_CLASS = URIRef(f"{PROFILE}Scope")
 ENTUR_PROFILE_MEMBER = URIRef(f"{ENTUR}ProfileMember")
@@ -89,12 +88,12 @@ def main() -> int:
         return 2
 
     if (ENTUR_PROFILE, EXTENDS, NP) not in graph:
-        print("ERROR: EnturProfile arver ikke profile:NP", file=sys.stderr)
+        print("ERROR: profile:Entur arver ikke profile:NP", file=sys.stderr)
         return 1
     if (ENTUR_PROFILE, RDF_TYPE, PROFILE_CLASS) not in graph:
         print("ERROR: EnturProfile er ikke deklarert som nordic:Profile", file=sys.stderr)
         return 1
-    if (ENTUR_SCOPE, RDF_TYPE, PROFILE_SCOPE_CLASS) not in graph:
+    if (ENTUR_PROFILE, RDF_TYPE, PROFILE_SCOPE_CLASS) not in graph:
         print("ERROR: profile:Entur er ikke deklarert som profile:Scope", file=sys.stderr)
         return 1
 
@@ -109,7 +108,7 @@ def main() -> int:
     profile_chain = inherited_profiles(graph, ENTUR_PROFILE)
     parent_profiles = set(profile_chain[1:])
     inherited = members(graph, parent_profiles | {NORDIC_SCOPE})
-    additions = scoped_members(graph, ENTUR_SCOPE)
+    additions = scoped_members(graph, ENTUR_PROFILE)
 
     undeclared_classes = sorted(
         additions - set(graph.subjects(RDF_TYPE, OWL_CLASS)), key=str
