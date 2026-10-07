@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Validate effective profile membership across profile inheritance.
 
-The Nordic baseline keeps its nordic:inProfile declarations. Entur additions
-are scoped with profile:scope, so Entur-authored terms do not look like Nordic
-membership declarations.
+The Nordic baseline and Entur additions both use profile:scope, with each
+profile resource serving as its own scope value. Entur inherits Nordic through
+nordic:extendsProfile.
 
 Exit codes:
   0  inheritance is valid and Entur has no redundant additions
@@ -27,9 +27,6 @@ SCOPE = URIRef(f"{PROFILE}scope")
 PROFILE_SCOPE_CLASS = URIRef(f"{PROFILE}Scope")
 ENTUR_PROFILE_MEMBER = URIRef(f"{ENTUR}ProfileMember")
 ENTUR_ON_CLASS = URIRef(f"{ENTUR}onClass")
-# The current Nordic baseline uses profile:NordicProfile for membership while
-# profile:NP is the profile instance used by downstream inheritance.
-NORDIC_SCOPE = URIRef(f"{PROFILE}NordicProfile")
 
 
 def load_graph() -> Graph:
@@ -109,7 +106,7 @@ def main() -> int:
 
     profile_chain = inherited_profiles(graph, ENTUR_PROFILE)
     parent_profiles = set(profile_chain[1:])
-    inherited = members(graph, parent_profiles | {NORDIC_SCOPE})
+    inherited = members(graph, parent_profiles) | scoped_members(graph, NP)
     additions = scoped_members(graph, ENTUR_PROFILE)
 
     undeclared_classes = sorted(

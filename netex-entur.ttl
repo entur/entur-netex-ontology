@@ -482,30 +482,11 @@ entur:OrganisationChain rdfs:comment """
     entur:step3 netex:Operator ;
     entur:step4 netex:ResponsibilitySet .
 
-## Structural delivery vocabulary used by Entur NeTEx exports. These are
-## standard NeTEx classes required by the Entur profile, but not currently
-## members of the Nordic allowlist.
+## Structural delivery classes still missing from the Nordic allowlist.
+## Nordic frame classes are inherited and are not repeated here.
 netex:PublicationDelivery profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
 netex:ParticipantRef profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:CompositeFrame profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:ResourceFrame profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:SiteFrame profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:ServiceFrame profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:ServiceCalendarFrame profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:TimetableFrame profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:VehicleScheduleFrame profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:FareFrame profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:SalesTransactionFrame profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
 netex:TrainComponent profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
