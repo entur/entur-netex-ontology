@@ -70,6 +70,10 @@ nsr:ExportedSiteFrame a owl:NamedIndividual ;
 ## =================================================================
 ## Constraints specific to NSR-produced StopPlace data.
 ## These describe what NSR EXPORTS — not what operators deliver.
+## PROPOSAL: Reconcile stop-place-v1-read fields against actual NSR exports.
+## API availability alone does not establish that Tiamat emits a field; model
+## API coverage separately if this profile is intended to describe the API.
+## Additional path-only fields below were observed in _stops.xml (2026-10-07).
 
 nsr:NSR_StopPlaceShape a sh:NodeShape ;
     sh:targetClass netex:StopPlace ;
@@ -141,6 +145,45 @@ nsr:NSR_StopPlaceShape a sh:NodeShape ;
         sh:maxCount 1 ;
         sh:name "placeEquipments" ;
         sh:description "Equipment: SanitaryEquipment, WaitingRoomEquipment, etc."
+    ] , [
+        sh:path netex:airSubmode ;
+        sh:name "AirSubmode"
+    ] , [
+        sh:path netex:busSubmode ;
+        sh:name "BusSubmode"
+    ] , [
+        sh:path netex:description ;
+        sh:name "Description"
+    ] , [
+        sh:path netex:metroSubmode ;
+        sh:name "MetroSubmode"
+    ] , [
+        sh:path netex:privateCode ;
+        sh:name "PrivateCode"
+    ] , [
+        sh:path netex:publicCode ;
+        sh:name "PublicCode"
+    ] , [
+        sh:path netex:railSubmode ;
+        sh:name "RailSubmode"
+    ] , [
+        sh:path netex:telecabinSubmode ;
+        sh:name "TelecabinSubmode"
+    ] , [
+        sh:path netex:tramSubmode ;
+        sh:name "TramSubmode"
+    ] , [
+        sh:path netex:waterSubmode ;
+        sh:name "WaterSubmode"
+    ] , [
+        sh:path netex:adjacentSites ;
+        sh:name "adjacentSites"
+    ] , [
+        sh:path netex:alternativeNames ;
+        sh:name "alternativeNames"
+    ] , [
+        sh:path netex:keyList ;
+        sh:name "keyList"
     ] .
 
 ## =================================================================
@@ -171,6 +214,24 @@ nsr:NSR_QuayShape a sh:NodeShape ;
         sh:path netex:accessibilityAssessment ;
         sh:maxCount 1 ;
         sh:name "AccessibilityAssessment"
+    ] , [
+        sh:path netex:compassBearing ;
+        sh:name "CompassBearing"
+    ] , [
+        sh:path netex:description ;
+        sh:name "Description"
+    ] , [
+        sh:path netex:keyList ;
+        sh:name "keyList"
+    ] , [
+        sh:path netex:boardingPositions ;
+        sh:name "boardingPositions"
+    ] , [
+        sh:path netex:name ;
+        sh:name "Name"
+    ] , [
+        sh:path netex:placeEquipments ;
+        sh:name "placeEquipments"
     ] .
 
 ## =================================================================
@@ -192,6 +253,132 @@ nsr:NSR_TopographicPlaceShape a sh:NodeShape ;
         sh:maxCount 1 ;
         sh:name "ParentTopographicPlaceRef" ;
         sh:description "Parent in geographic hierarchy"
+    ] , [
+        sh:path netex:countryRef ;
+        sh:name "CountryRef"
+    ] , [
+        sh:path netex:descriptor ;
+        sh:name "Descriptor"
+    ] , [
+        sh:path netex:isoCode ;
+        sh:name "IsoCode"
+    ] , [
+        sh:path netex:polygon ;
+        sh:name "Polygon"
+    ] , [
+        sh:path netex:validBetween ;
+        sh:name "ValidBetween"
+    ] .
+
+## =================================================================
+## ADDITIONAL NSR EXPORT SHAPES
+## =================================================================
+
+nsr:NSR_ScheduledStopPointShape a sh:NodeShape ;
+    sh:targetClass netex:ScheduledStopPoint ;
+    rdfs:label "ScheduledStopPoint — NSR export constraints" ;
+    sh:property [
+        sh:path netex:name ;
+        sh:name "Name"
+    ] , [
+        sh:path netex:validBetween ;
+        sh:name "ValidBetween"
+    ] .
+
+nsr:NSR_FareZoneShape a sh:NodeShape ;
+    sh:targetClass netex:FareZone ;
+    rdfs:label "FareZone — NSR export constraints" ;
+    sh:property [
+        sh:path netex:authorityRef ;
+        sh:name "AuthorityRef"
+    ] , [
+        sh:path netex:name ;
+        sh:name "Name"
+    ] , [
+        sh:path netex:polygon ;
+        sh:name "Polygon"
+    ] , [
+        sh:path netex:privateCode ;
+        sh:name "PrivateCode"
+    ] , [
+        sh:path netex:scopingMethod ;
+        sh:name "ScopingMethod"
+    ] , [
+        sh:path netex:validBetween ;
+        sh:name "ValidBetween"
+    ] , [
+        sh:path netex:zoneTopology ;
+        sh:name "ZoneTopology"
+    ] , [
+        sh:path netex:keyList ;
+        sh:name "keyList"
+    ] , [
+        sh:path netex:members ;
+        sh:name "members"
+    ] , [
+        sh:path netex:neighbours ;
+        sh:name "neighbours"
+    ] .
+
+nsr:NSR_TariffZoneShape a sh:NodeShape ;
+    sh:targetClass netex:TariffZone ;
+    rdfs:label "TariffZone — NSR export constraints" ;
+    sh:property [
+        sh:path netex:name ;
+        sh:name "Name"
+    ] , [
+        sh:path netex:polygon ;
+        sh:name "Polygon"
+    ] , [
+        sh:path netex:validBetween ;
+        sh:name "ValidBetween"
+    ] , [
+        sh:path netex:keyList ;
+        sh:name "keyList"
+    ] .
+
+nsr:NSR_ParkingShape a sh:NodeShape ;
+    sh:targetClass netex:Parking ;
+    rdfs:label "Parking — NSR export constraints" ;
+    sh:property [
+        sh:path netex:centroid ;
+        sh:name "Centroid"
+    ] , [
+        sh:path netex:covered ;
+        sh:name "Covered"
+    ] , [
+        sh:path netex:description ;
+        sh:name "Description"
+    ] , [
+        sh:path netex:name ;
+        sh:name "Name"
+    ] , [
+        sh:path netex:parentSiteRef ;
+        sh:name "ParentSiteRef"
+    ] , [
+        sh:path netex:parkingLayout ;
+        sh:name "ParkingLayout"
+    ] , [
+        sh:path netex:parkingPaymentProcess ;
+        sh:name "ParkingPaymentProcess"
+    ] , [
+        sh:path netex:parkingVehicleTypes ;
+        sh:name "ParkingVehicleTypes"
+    ] , [
+        sh:path netex:rechargingAvailable ;
+        sh:name "RechargingAvailable"
+    ] , [
+        sh:path netex:totalCapacity ;
+        sh:name "TotalCapacity"
+    ] , [
+        sh:path netex:validBetween ;
+        sh:name "ValidBetween"
+    ] , [
+        sh:path netex:keyList ;
+        sh:name "keyList"
+    ] , [
+        sh:path netex:parkingProperties ;
+        sh:name "parkingProperties"
     ] .
 
 ## =================================================================
