@@ -78,6 +78,36 @@ nsr:ExportedSiteFrame a owl:NamedIndividual ;
 nsr:NSR_StopPlaceShape a sh:NodeShape ;
     sh:targetClass netex:StopPlace ;
     rdfs:label "StopPlace — NSR export constraints" ;
+    ## Monomodal stops require mode and type; parents are exempt when
+    ## keyList contains IS_PARENT_STOP_PLACE=true.
+    sh:or (
+        [
+            sh:property [
+                sh:path netex:transportMode ;
+                sh:minCount 1
+            ] ;
+            sh:property [
+                sh:path netex:stopPlaceType ;
+                sh:minCount 1
+            ]
+        ]
+        [
+            sh:property [
+                sh:path ( netex:keyList netex:keyValue ) ;
+                sh:qualifiedValueShape [
+                    sh:property [
+                        sh:path netex:key ;
+                        sh:hasValue "IS_PARENT_STOP_PLACE"
+                    ] ;
+                    sh:property [
+                        sh:path netex:value ;
+                        sh:hasValue "true"
+                    ]
+                ] ;
+                sh:qualifiedMinCount 1
+            ]
+        ]
+    ) ;
 
     ## --- Required fields ---
     sh:property [
@@ -93,16 +123,14 @@ nsr:NSR_StopPlaceShape a sh:NodeShape ;
         sh:description "Geographic location (WGS84)"
     ] , [
         sh:path netex:transportMode ;
-        sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:name "TransportMode" ;
-        sh:description "Primary transport mode (rail, bus, water, etc.)"
+        sh:description "Primary mode for monomodal stops; absent on multimodal parents"
     ] , [
         sh:path netex:stopPlaceType ;
-        sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:name "StopPlaceType" ;
-        sh:description "Classification (railStation, busStation, etc.)"
+        sh:description "Classification for monomodal stops; absent on multimodal parents"
     ] ;
 
     ## --- Used fields (0..1) ---
