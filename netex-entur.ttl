@@ -19,6 +19,7 @@
 @prefix entur:   <https://entur.org/ontology#> .
 @prefix nordic:  <https://netex-cen.eu/nordic#> .
 @prefix profile: <https://netex-cen.eu/profile#> .
+@prefix siri:    <https://siri-cen.eu/ontology#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
@@ -27,42 +28,19 @@
 
 ## --- Import Nordic Profile ---
 <https://entur.org/ontology> a owl:Ontology ;
-    owl:imports <https://netex-cen.eu/profile/nordic> ,
-                <https://netex-cen.eu/profile/nordic-baseline> .
+    owl:imports <https://netex-cen.eu/profile/nordic> .
 
 ## Entur reuses the Nordic profile through inheritance and declares its
-## additional classes with profile:scope. Nordic does not refer to this
-## downstream profile.
+## additional classes as entur:X profile:ProfileClass nodes with
+## profile:scope profile:Entur. Nordic does not refer to this downstream
+## profile.
 profile:Entur a profile:Scope , nordic:Profile ;
     rdfs:label "Entur Profile" ;
     nordic:extendsProfile profile:NP .
 
-## Entur-owned vocabulary for field-level profile declarations. The Nordic
-## baseline keeps using nordic:ProfileMember; these terms describe only the
-## declarations maintained by this Entur ontology.
-entur:ProfileMember a owl:Class ;
-    rdfs:label "ProfileMember" ;
-    skos:definition "An Entur profile field (element or attribute) with its cardinality" .
-
-entur:onClass a owl:ObjectProperty ;
-    rdfs:label "onClass" ;
-    rdfs:domain entur:ProfileMember ;
-    rdfs:range owl:Class .
-
-entur:element a owl:DatatypeProperty ;
-    rdfs:label "element" ;
-    rdfs:domain entur:ProfileMember ;
-    rdfs:range xsd:string .
-
-entur:path a owl:DatatypeProperty ;
-    rdfs:label "path" ;
-    rdfs:domain entur:ProfileMember ;
-    rdfs:range xsd:string .
-
-entur:cardinality a owl:DatatypeProperty ;
-    rdfs:label "cardinality" ;
-    rdfs:domain entur:ProfileMember ;
-    rdfs:range xsd:string .
+## Profile declarations use the shared profile: vocabulary. Each Entur
+## class is an Entur-owned profile:ProfileClass node (entur:X) pointing at
+## netex:X; nothing here writes profile statements on netex: classes.
 
 entur:Provenance a owl:Class ;
     rdfs:label "Provenance" .
@@ -75,395 +53,467 @@ entur:Baseline a entur:Provenance ;
     rdfs:label "Entur baseline" ;
     skos:definition "An initial Entur profile rule not yet tracked to a separate decision" .
 
-## These classes are additions to the effective Entur profile. Their field
-## definitions are maintained here because they are not in the Nordic baseline.
-netex:CompoundTrain profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:Contract profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:DatedServiceJourney profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:FareContract profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:FareZone profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:Train profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:TrainBlock profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-
 ## =================================================================
-## ENTUR PROFILE FIELD DEFINITIONS
+## ENTUR PROFILE CLASSES AND FIELD DEFINITIONS
 ## =================================================================
-## Field-level entur:ProfileMember data for the Entur additions above.
+## Each entur:X node is Entur's own resource for netex:X and an addition
+## to the effective Entur profile on top of the inherited Nordic classes.
 
 ## --- CompoundTrain (Entur) ---
-[] a entur:ProfileMember ;
-    entur:onClass netex:CompoundTrain ;
-    entur:element "@id" ;
-    entur:path "CompoundTrain/@id" ;
-    entur:cardinality "1..1" ;
+entur:CompoundTrain a profile:ProfileClass ;
+    profile:onClass netex:CompoundTrain ;
+    profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:CompoundTrain ;
-    entur:element "@version" ;
-    entur:path "CompoundTrain/@version" ;
-    entur:cardinality "1..1" ;
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompoundTrain ;
+    profile:element "@id" ;
+    profile:path "CompoundTrain/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:CompoundTrain ;
-    entur:element "Name" ;
-    entur:path "CompoundTrain/Name" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompoundTrain ;
+    profile:element "@version" ;
+    profile:path "CompoundTrain/@version" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:CompoundTrain ;
-    entur:element "components" ;
-    entur:path "CompoundTrain/components" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompoundTrain ;
+    profile:element "Name" ;
+    profile:path "CompoundTrain/Name" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:CompoundTrain ;
-    entur:element "TrainInCompoundTrain/@id" ;
-    entur:path "CompoundTrain/components/TrainInCompoundTrain/@id" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompoundTrain ;
+    profile:element "components" ;
+    profile:path "CompoundTrain/components" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:CompoundTrain ;
-    entur:element "@order" ;
-    entur:path "CompoundTrain/components/TrainInCompoundTrain/@order" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompoundTrain ;
+    profile:element "TrainInCompoundTrain/@id" ;
+    profile:path "CompoundTrain/components/TrainInCompoundTrain/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:CompoundTrain ;
-    entur:element "Train@ref" ;
-    entur:path "CompoundTrain/components/TrainInCompoundTrain/TrainRef/@ref" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompoundTrain ;
+    profile:element "@order" ;
+    profile:path "CompoundTrain/components/TrainInCompoundTrain/@order" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:CompoundTrain ;
-    entur:element "Label" ;
-    entur:path "CompoundTrain/components/TrainInCompoundTrain/Label" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompoundTrain ;
+    profile:element "Train@ref" ;
+    profile:path "CompoundTrain/components/TrainInCompoundTrain/TrainRef/@ref" ;
+    profile:cardinality "1..1" ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompoundTrain ;
+    profile:element "Label" ;
+    profile:path "CompoundTrain/components/TrainInCompoundTrain/Label" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
 
 ## --- Contract (Entur) ---
-[] a entur:ProfileMember ;
-    entur:onClass netex:Contract ;
-    entur:element "@id" ;
-    entur:path "Contract/@id" ;
-    entur:cardinality "1..1" ;
+entur:Contract a profile:ProfileClass ;
+    profile:onClass netex:Contract ;
+    profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Contract ;
-    entur:element "@version" ;
-    entur:path "Contract/@version" ;
-    entur:cardinality "1..1" ;
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Contract ;
+    profile:element "@id" ;
+    profile:path "Contract/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Contract ;
-    entur:element "Name" ;
-    entur:path "Contract/Name" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Contract ;
+    profile:element "@version" ;
+    profile:path "Contract/@version" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Contract ;
-    entur:element "ContractType" ;
-    entur:path "Contract/ContractType" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Contract ;
+    profile:element "Name" ;
+    profile:path "Contract/Name" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Contract ;
-    entur:element "LegalStatus" ;
-    entur:path "Contract/LegalStatus" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Contract ;
+    profile:element "ContractType" ;
+    profile:path "Contract/ContractType" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Contract ;
-    entur:element "ContractGoverningLaw" ;
-    entur:path "Contract/ContractGoverningLaw" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Contract ;
+    profile:element "LegalStatus" ;
+    profile:path "Contract/LegalStatus" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Contract ;
-    entur:element "Authority@ref" ;
-    entur:path "Contract/contractees/OrganisationRef/@ref" ;
-    entur:cardinality "0..n" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Contract ;
+    profile:element "ContractGoverningLaw" ;
+    profile:path "Contract/ContractGoverningLaw" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Contract ;
-    entur:element "Operator@ref" ;
-    entur:path "Contract/contractors/OrganisationRef/@ref" ;
-    entur:cardinality "0..n" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Contract ;
+    profile:element "Authority@ref" ;
+    profile:path "Contract/contractees/OrganisationRef/@ref" ;
+    profile:cardinality "0..n" ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Contract ;
+    profile:element "Operator@ref" ;
+    profile:path "Contract/contractors/OrganisationRef/@ref" ;
+    profile:cardinality "0..n" ;
     entur:provenance entur:Baseline .
 
 ## --- DatedServiceJourney (Entur) ---
-[] a entur:ProfileMember ;
-    entur:onClass netex:DatedServiceJourney ;
-    entur:element "@id" ;
-    entur:path "DatedServiceJourney/@id" ;
-    entur:cardinality "1..1" ;
+entur:DatedServiceJourney a profile:ProfileClass ;
+    profile:onClass netex:DatedServiceJourney ;
+    profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:DatedServiceJourney ;
-    entur:element "@version" ;
-    entur:path "DatedServiceJourney/@version" ;
-    entur:cardinality "1..1" ;
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "@id" ;
+    profile:path "DatedServiceJourney/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:DatedServiceJourney ;
-    entur:element "Journey/@ref" ;
-    entur:path "journeyRef" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "@version" ;
+    profile:path "DatedServiceJourney/@version" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:DatedServiceJourney ;
-    entur:element "OperatingDay/@ref" ;
-    entur:path "operatingDayRef" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "Journey/@ref" ;
+    profile:path "journeyRef" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:DatedServiceJourney ;
-    entur:element "TrainBlock/@ref" ;
-    entur:path "BlockRef/@ref" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "OperatingDay/@ref" ;
+    profile:path "operatingDayRef" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:DatedServiceJourney ;
-    entur:element "ServiceAlteration" ;
-    entur:path "ServiceAlteration" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "TrainBlock/@ref" ;
+    profile:path "BlockRef/@ref" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:DatedServiceJourney ;
-    entur:element "replacedJourneys" ;
-    entur:path "replacedJourneys" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "ServiceAlteration" ;
+    profile:path "ServiceAlteration" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:DatedServiceJourney ;
-    entur:element "DatedVehicleJourney/@ref" ;
-    entur:path "replacedJourneys/DatedVehicleJourneyRef/@ref" ;
-    entur:cardinality "0..n" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "replacedJourneys" ;
+    profile:path "replacedJourneys" ;
+    profile:cardinality "0..1" ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "DatedVehicleJourney/@ref" ;
+    profile:path "replacedJourneys/DatedVehicleJourneyRef/@ref" ;
+    profile:cardinality "0..n" ;
     entur:provenance entur:Baseline .
 
 ## --- FareContract (Entur — fare profile still a draft) ---
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareContract ;
-    entur:element "@id" ;
-    entur:path "FareContract/@id" ;
-    entur:cardinality "1..1" ;
+entur:FareContract a profile:ProfileClass ;
+    profile:onClass netex:FareContract ;
+    profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareContract ;
-    entur:element "@version" ;
-    entur:path "FareContract/@version" ;
-    entur:cardinality "1..1" ;
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareContract ;
+    profile:element "@id" ;
+    profile:path "FareContract/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareContract ;
-    entur:element "TypeOfFareContractRef/@ref" ;
-    entur:path "FareContract/TypeOfFareContractRef/@ref" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareContract ;
+    profile:element "@version" ;
+    profile:path "FareContract/@version" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareContract ;
-    entur:element "CustomerAccountRef/@ref" ;
-    entur:path "FareContract/CustomerAccountRef/@ref" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareContract ;
+    profile:element "TypeOfFareContractRef/@ref" ;
+    profile:path "FareContract/TypeOfFareContractRef/@ref" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareContract ;
-    entur:element "FareContractEntry/@id" ;
-    entur:path "FareContract/fareContractEntries/FareContractEntry/@id" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareContract ;
+    profile:element "CustomerAccountRef/@ref" ;
+    profile:path "FareContract/CustomerAccountRef/@ref" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareContract ;
-    entur:element "FareContractEntry/@version" ;
-    entur:path "FareContract/fareContractEntries/FareContractEntry/@version" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareContract ;
+    profile:element "FareContractEntry/@id" ;
+    profile:path "FareContract/fareContractEntries/FareContractEntry/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareContract ;
-    entur:element "CustomerPurchasePackageRef/@ref" ;
-    entur:path "FareContract/fareContractEntries/FareContractEntry/CustomerPurchasePackageRef/@ref" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareContract ;
+    profile:element "FareContractEntry/@version" ;
+    profile:path "FareContract/fareContractEntries/FareContractEntry/@version" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareContract ;
-    entur:element "TravelSpecificationRef/@ref" ;
-    entur:path "FareContract/fareContractEntries/FareContractEntry/TravelSpecificationRef/@ref" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareContract ;
+    profile:element "CustomerPurchasePackageRef/@ref" ;
+    profile:path "FareContract/fareContractEntries/FareContractEntry/CustomerPurchasePackageRef/@ref" ;
+    profile:cardinality "1..1" ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareContract ;
+    profile:element "TravelSpecificationRef/@ref" ;
+    profile:path "FareContract/fareContractEntries/FareContractEntry/TravelSpecificationRef/@ref" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
 
 ## --- FareZone (Entur — fare profile still a draft) ---
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareZone ;
-    entur:element "@id" ;
-    entur:path "FareZone/@id" ;
-    entur:cardinality "1..1" ;
+entur:FareZone a profile:ProfileClass ;
+    profile:onClass netex:FareZone ;
+    profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareZone ;
-    entur:element "@version" ;
-    entur:path "FareZone/@version" ;
-    entur:cardinality "1..1" ;
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareZone ;
+    profile:element "@id" ;
+    profile:path "FareZone/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareZone ;
-    entur:element "Name" ;
-    entur:path "FareZone/Name" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareZone ;
+    profile:element "@version" ;
+    profile:path "FareZone/@version" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareZone ;
-    entur:element "Description" ;
-    entur:path "FareZone/Description" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareZone ;
+    profile:element "Name" ;
+    profile:path "FareZone/Name" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareZone ;
-    entur:element "members" ;
-    entur:path "FareZone/members" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareZone ;
+    profile:element "Description" ;
+    profile:path "FareZone/Description" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:FareZone ;
-    entur:element "ScheduledStopPoint/@ref" ;
-    entur:path "FareZone/members/ScheduledStopPointRef/@ref" ;
-    entur:cardinality "0..n" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareZone ;
+    profile:element "members" ;
+    profile:path "FareZone/members" ;
+    profile:cardinality "0..1" ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FareZone ;
+    profile:element "ScheduledStopPoint/@ref" ;
+    profile:path "FareZone/members/ScheduledStopPointRef/@ref" ;
+    profile:cardinality "0..n" ;
     entur:provenance entur:Baseline .
 
 ## --- Train (Entur) ---
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "@id" ;
-    entur:path "Train/@id" ;
-    entur:cardinality "1..1" ;
+entur:Train a profile:ProfileClass ;
+    profile:onClass netex:Train ;
+    profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "@version" ;
-    entur:path "Train/@version" ;
-    entur:cardinality "1..1" ;
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "@id" ;
+    profile:path "Train/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "Name" ;
-    entur:path "Train/Name" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "@version" ;
+    profile:path "Train/@version" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "TrainSize" ;
-    entur:path "Train/TrainSize" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "Name" ;
+    profile:path "Train/Name" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "NumberOfCars" ;
-    entur:path "Train/TrainSize/NumberOfCars" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "TrainSize" ;
+    profile:path "Train/TrainSize" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "TrainSizeType" ;
-    entur:path "Train/TrainSize/TrainSizeType" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "NumberOfCars" ;
+    profile:path "Train/TrainSize/NumberOfCars" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "components" ;
-    entur:path "Train/components" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "TrainSizeType" ;
+    profile:path "Train/TrainSize/TrainSizeType" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "TrainComponent/@id" ;
-    entur:path "Train/components/TrainComponent/@id" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "components" ;
+    profile:path "Train/components" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "@order" ;
-    entur:path "Train/components/TrainComponent/@order" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "TrainComponent/@id" ;
+    profile:path "Train/components/TrainComponent/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "Label" ;
-    entur:path "Train/components/TrainComponent/Label" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "@order" ;
+    profile:path "Train/components/TrainComponent/@order" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "TrainElement/@id" ;
-    entur:path "Train/components/TrainComponent/TrainElement/@id" ;
-    entur:cardinality "1..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "Label" ;
+    profile:path "Train/components/TrainComponent/Label" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "TrainElementType" ;
-    entur:path "Train/components/TrainComponent/TrainElement/TrainElementType" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "TrainElement/@id" ;
+    profile:path "Train/components/TrainComponent/TrainElement/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "FareClasses" ;
-    entur:path "Train/components/TrainComponent/TrainElement/FareClasses" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "TrainElementType" ;
+    profile:path "Train/components/TrainComponent/TrainElement/TrainElementType" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "SeatingCapacity" ;
-    entur:path "Train/components/TrainComponent/TrainElement/PassengerCapacity/SeatingCapacity" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "FareClasses" ;
+    profile:path "Train/components/TrainComponent/TrainElement/FareClasses" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:Train ;
-    entur:element "StandingCapacity" ;
-    entur:path "Train/components/TrainComponent/TrainElement/PassengerCapacity/StandingCapacity" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "SeatingCapacity" ;
+    profile:path "Train/components/TrainComponent/TrainElement/PassengerCapacity/SeatingCapacity" ;
+    profile:cardinality "0..1" ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Train ;
+    profile:element "StandingCapacity" ;
+    profile:path "Train/components/TrainComponent/TrainElement/PassengerCapacity/StandingCapacity" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
 
 ## --- TrainBlock (Entur) ---
-[] a entur:ProfileMember ;
-    entur:onClass netex:TrainBlock ;
-    entur:element "@id" ;
-    entur:path "Block/@id" ;
-    entur:cardinality "1..1" ;
+entur:TrainBlock a profile:ProfileClass ;
+    profile:onClass netex:TrainBlock ;
+    profile:scope profile:Entur ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:TrainBlock ;
-    entur:element "@version" ;
-    entur:path "Block/@version" ;
-    entur:cardinality "1..1" ;
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TrainBlock ;
+    profile:element "@id" ;
+    profile:path "Block/@id" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:TrainBlock ;
-    entur:element "Name" ;
-    entur:path "Block/Name" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TrainBlock ;
+    profile:element "@version" ;
+    profile:path "Block/@version" ;
+    profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:TrainBlock ;
-    entur:element "Description" ;
-    entur:path "Block/Description" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TrainBlock ;
+    profile:element "Name" ;
+    profile:path "Block/Name" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:TrainBlock ;
-    entur:element "Operator@ref" ;
-    entur:path "Block/OperatorRef/@ref" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TrainBlock ;
+    profile:element "Description" ;
+    profile:path "Block/Description" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
-[] a entur:ProfileMember ;
-    entur:onClass netex:TrainBlock ;
-    entur:element "journeys" ;
-    entur:path "Block/journeys" ;
-    entur:cardinality "0..1" ;
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TrainBlock ;
+    profile:element "Operator@ref" ;
+    profile:path "Block/OperatorRef/@ref" ;
+    profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TrainBlock ;
+    profile:element "journeys" ;
+    profile:path "Block/journeys" ;
+    profile:cardinality "0..1" ;
+    entur:provenance entur:Baseline .
+
+## --- VehicleScheduleFrame (Entur) ---
+## Frame-level membership only; holds TrainBlock. Dropped from the Nordic
+## baseline upstream.
+entur:VehicleScheduleFrame a profile:ProfileClass ;
+    profile:onClass netex:VehicleScheduleFrame ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+## =================================================================
+## ENTUR FRAME CONTAINMENT, ORDERING, SPECIALISATION, SIRI
+## =================================================================
+## Carried over from the Nordic layer, which no longer mentions these
+## Entur-specific classes. Asserted on the Entur nodes; nordic:containedIn
+## links them to the Nordic frame nodes without writing on those.
+
+entur:VehicleScheduleFrame nordic:containedIn nordic:CompositeFrame .
+entur:TrainBlock nordic:containedIn entur:VehicleScheduleFrame .
+entur:CompoundTrain nordic:containedIn nordic:ResourceFrame .
+entur:Train nordic:containedIn nordic:ResourceFrame .
+entur:DatedServiceJourney nordic:containedIn nordic:TimetableFrame .
+entur:FareZone nordic:containedIn nordic:FareFrame .
+entur:FareContract nordic:containedIn nordic:SalesTransactionFrame .
+
+entur:DatedServiceJourney profile:elementOrder [
+    profile:position 1 ; profile:element "@id"
+] , [
+    profile:position 2 ; profile:element "@version"
+] , [
+    profile:position 3 ; profile:element "ServiceAlteration"
+] , [
+    profile:position 4 ; profile:element "BlockRef"
+] , [
+    profile:position 5 ; profile:element "ServiceJourneyRef"
+] , [
+    profile:position 6 ; profile:element "replacedJourneys"
+] , [
+    profile:position 7 ; profile:element "OperatingDayRef"
+] .
+
+entur:specializes a owl:ObjectProperty ;
+    rdfs:label "specializes" ;
+    skos:definition "This profile class is a functional specialization of another (e.g. DatedServiceJourney specializes ServiceJourney)" ;
+    skos:scopeNote "Deliberately NOT rdfs:subClassOf: a DatedServiceJourney references a ServiceJourney rather than inheriting its identity, so a reasoner must not conclude that a DSJ IS-A ServiceJourney." .
+
+entur:DatedServiceJourney entur:specializes nordic:ServiceJourney .
+
+entur:VehicleJourneyNote a skos:Concept ;
+    rdfs:seeAlso netex:VehicleJourney ;
+    skos:scopeNote "VehicleJourney is deliberately not connected via rdfs:subClassOf or entur:specializes to ServiceJourney or DatedServiceJourney. NeTEx inherits this ambiguity from Transmodel: whether DatedServiceJourney/DatedVehicleJourney are true specializations of VehicleJourney is unresolved in CEN (issue #292). This ontology represents the gap rather than overclaiming a hierarchy that the standard itself does not formalize." .
+
+entur:DatedServiceJourney nordic:referencedBySIRI siri:SIRI_ET , siri:SIRI_VM , siri:SIRI_SX , siri:SIRI_FM ;
+    rdfs:comment "Via DatedVehicleJourneyRef in all services" .
 
 ## Entur-scoped replacement for the shared nordic:OrganisationChain, which
 ## referenced netex:Contract (not in the Nordic allowlist) and does not belong in the shared
@@ -472,6 +522,21 @@ entur:step1 a owl:ObjectProperty ; rdfs:label "step1" .
 entur:step2 a owl:ObjectProperty ; rdfs:label "step2" .
 entur:step3 a owl:ObjectProperty ; rdfs:label "step3" .
 entur:step4 a owl:ObjectProperty ; rdfs:label "step4" .
+entur:step5 a owl:ObjectProperty ; rdfs:label "step5" .
+
+## Extends nordic:TimetableChain (which ends at ServiceJourney) with DSJ.
+entur:TimetableChain rdfs:comment """
+    Line → Route → JourneyPattern → ServiceJourney → DatedServiceJourney
+    The core modelling chain: from abstract line identity
+    through physical route, stop sequence, timed trip template,
+    to a concrete instance on a specific date.
+""" ;
+    rdfs:seeAlso nordic:TimetableChain ;
+    entur:step1 netex:Line ;
+    entur:step2 netex:Route ;
+    entur:step3 netex:JourneyPattern ;
+    entur:step4 netex:ServiceJourney ;
+    entur:step5 netex:DatedServiceJourney .
 
 entur:OrganisationChain rdfs:comment """
     Authority → Contract → Operator → ResponsibilitySet
@@ -481,42 +546,6 @@ entur:OrganisationChain rdfs:comment """
     entur:step2 netex:Contract ;
     entur:step3 netex:Operator ;
     entur:step4 netex:ResponsibilitySet .
-
-## Structural delivery classes still missing from the Nordic allowlist.
-## Nordic frame classes are inherited and are not repeated here.
-netex:PublicationDelivery profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:ParticipantRef profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:TrainComponent profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:TrainInCompoundTrain_VersionedChildStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-
-## Generated containment wrappers for the delivery and frame contents.
-## Names ending in _RelStructure are NeTEx classes, not properties; they
-## carry the XML list/containment semantics for properties such as
-## netex:stopPlaces and netex:dataObjects.
-netex:dataObjects_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:frames_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:topographicPlaces_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:quays_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:stopPlaces_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:scheduledStopPointsInFrame_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:stopPlacesInFrame_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:trainComponents_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:blockParts_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-netex:journeysInFrame_RelStructure profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
 
 ## =================================================================
 ## META-CLASSES (entur vocabulary)
@@ -579,7 +608,7 @@ entur:ENT_DatedServiceJourneyShape a sh:NodeShape ;
         sh:in ( "planned" "cancellation" "replaced" "extraJourney" )
     ] .
 
-## FareZone is Entur-scoped (not part of the Nordic allowlist). This
+## FareZone is Entur-scoped (not part of the Nordic Profile). This
 ## shape replaces the former profile:NP_FareZoneShape, which wrongly lived
 ## in the shared netex-nordic.ttl.
 entur:ENT_FareZoneShape a sh:NodeShape ;
