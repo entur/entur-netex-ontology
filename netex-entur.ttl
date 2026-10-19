@@ -28,8 +28,7 @@
 
 ## --- Import Nordic Profile ---
 <https://entur.org/ontology> a owl:Ontology ;
-    owl:imports <https://netex-cen.eu/profile/nordic> ,
-                <https://netex-cen.eu/profile/nordic-baseline> .
+    owl:imports <https://netex-cen.eu/profile/nordic> .
 
 ## Entur reuses the Nordic profile through inheritance and declares its
 ## additional classes as entur:X profile:ProfileClass nodes with
