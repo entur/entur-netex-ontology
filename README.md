@@ -28,6 +28,33 @@ submodule and is not modified here.
 **Design principle:** Each layer may tighten constraints via SHACL, but never
 loosen constraints from the layer below.
 
+### Profile membership
+
+The Entur profile (`profile:Entur`) extends the Nordic Profile
+(`nordic:extendsProfile profile:NP`) and inherits all Nordic classes. Following
+the upstream ownership rule, profile statements are never written on the
+standard `netex:` classes. Entur mints its own `profile:ProfileClass` nodes
+with the shared `profile:` vocabulary:
+
+```turtle
+entur:DatedServiceJourney a profile:ProfileClass ;
+    profile:onClass netex:DatedServiceJourney ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DatedServiceJourney ;
+    profile:element "@id" ;
+    profile:path "DatedServiceJourney/@id" ;
+    profile:cardinality "1..1" ;
+    entur:provenance entur:Baseline .
+```
+
+An Entur node on a class that Nordic already includes is only allowed when it
+adds field definitions. Entur-specific frame containment, element ordering,
+specialisation and SIRI references (e.g. for DatedServiceJourney) are asserted
+on the Entur nodes. `scripts/validate_profile_inheritance.py` enforces this.
+
 ## File Structure
 
 ```
