@@ -225,16 +225,19 @@ def main() -> int:
         return 1
 
     profile_nodes = set(graph.subjects(RDF_TYPE, PROFILE_CLASS_NODE))
-    orphans = sorted(
-        str(node)
-        for member in graph.subjects(RDF_TYPE, PROFILE_MEMBER)
-        for node in graph.objects(member, MEMBER_OF)
-        if node not in profile_nodes
-    )
+    orphans: list[str] = []
+    for member in graph.subjects(RDF_TYPE, PROFILE_MEMBER):
+        owners = list(graph.objects(member, MEMBER_OF))
+        if len(owners) != 1 or owners[0] not in profile_nodes:
+            label = graph.value(member, MEMBER_PATH) or member
+            orphans.append(f"{label} -> {', '.join(map(str, owners)) or '(ingen profile:memberOf)'}")
     if orphans:
-        print("ERROR: ProfileMember peker på noe som ikke er en profile:ProfileClass:", file=sys.stderr)
-        for node in sorted(set(orphans)):
-            print(node, file=sys.stderr)
+        print(
+            "ERROR: ProfileMember må ha nøyaktig én profile:memberOf til en profile:ProfileClass:",
+            file=sys.stderr,
+        )
+        for orphan in sorted(orphans):
+            print(orphan, file=sys.stderr)
         return 1
 
     nordic_nodes = scoped_nodes(graph, NP)
