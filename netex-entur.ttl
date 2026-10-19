@@ -547,63 +547,6 @@ entur:OrganisationChain rdfs:comment """
     entur:step3 netex:Operator ;
     entur:step4 netex:ResponsibilitySet .
 
-## Structural classes still missing from the Nordic allowlist.
-## Nordic classes (frames, PublicationDelivery with ParticipantRef) are
-## inherited and are not repeated here.
-entur:TrainComponent a profile:ProfileClass ;
-    profile:onClass netex:TrainComponent ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:TrainInCompoundTrain_VersionedChildStructure a profile:ProfileClass ;
-    profile:onClass netex:TrainInCompoundTrain_VersionedChildStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-
-## Generated containment wrappers for the delivery and frame contents.
-## Names ending in _RelStructure are NeTEx classes, not properties; they
-## carry the XML list/containment semantics for properties such as
-## netex:stopPlaces and netex:dataObjects.
-entur:dataObjects_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:dataObjects_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:frames_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:frames_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:topographicPlaces_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:topographicPlaces_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:quays_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:quays_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:stopPlaces_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:stopPlaces_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:scheduledStopPointsInFrame_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:scheduledStopPointsInFrame_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:stopPlacesInFrame_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:stopPlacesInFrame_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:trainComponents_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:trainComponents_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:blockParts_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:blockParts_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-entur:journeysInFrame_RelStructure a profile:ProfileClass ;
-    profile:onClass netex:journeysInFrame_RelStructure ;
-    profile:scope profile:Entur ;
-    entur:provenance entur:Baseline .
-
 ## =================================================================
 ## META-CLASSES (entur vocabulary)
 ## =================================================================
