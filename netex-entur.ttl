@@ -57,10 +57,8 @@ entur:Baseline a entur:Provenance ;
 ## =================================================================
 ## ENTUR PROFILE CLASSES AND FIELD DEFINITIONS
 ## =================================================================
-## Each entur:X node is Entur's own resource for netex:X. Classes not in
-## the Nordic baseline are additions to the effective Entur profile; for
-## Nordic classes (FareContract, FareZone) the node only carries the
-## Entur field definitions.
+## Each entur:X node is Entur's own resource for netex:X and an addition
+## to the effective Entur profile on top of the inherited Nordic classes.
 
 ## --- CompoundTrain (Entur) ---
 entur:CompoundTrain a profile:ProfileClass ;
@@ -227,7 +225,7 @@ entur:DatedServiceJourney a profile:ProfileClass ;
     profile:cardinality "0..n" ;
     entur:provenance entur:Baseline .
 
-## --- FareContract (NP class; Entur fields, fare profile still a draft) ---
+## --- FareContract (Entur — fare profile still a draft) ---
 entur:FareContract a profile:ProfileClass ;
     profile:onClass netex:FareContract ;
     profile:scope profile:Entur ;
@@ -282,7 +280,7 @@ entur:FareContract a profile:ProfileClass ;
     profile:cardinality "0..1" ;
     entur:provenance entur:Baseline .
 
-## --- FareZone (NP class; Entur fields, fare profile still a draft) ---
+## --- FareZone (Entur — fare profile still a draft) ---
 entur:FareZone a profile:ProfileClass ;
     profile:onClass netex:FareZone ;
     profile:scope profile:Entur ;
@@ -485,6 +483,8 @@ entur:TrainBlock nordic:containedIn entur:VehicleScheduleFrame .
 entur:CompoundTrain nordic:containedIn nordic:ResourceFrame .
 entur:Train nordic:containedIn nordic:ResourceFrame .
 entur:DatedServiceJourney nordic:containedIn nordic:TimetableFrame .
+entur:FareZone nordic:containedIn nordic:FareFrame .
+entur:FareContract nordic:containedIn nordic:SalesTransactionFrame .
 
 entur:DatedServiceJourney profile:elementOrder [
     profile:position 1 ; profile:element "@id"
@@ -505,9 +505,13 @@ entur:DatedServiceJourney profile:elementOrder [
 entur:specializes a owl:ObjectProperty ;
     rdfs:label "specializes" ;
     skos:definition "This profile class is a functional specialization of another (e.g. DatedServiceJourney specializes ServiceJourney)" ;
-    skos:scopeNote "Deliberately NOT rdfs:subClassOf: a DatedServiceJourney references a ServiceJourney rather than inheriting its identity. Whether DatedServiceJourney/DatedVehicleJourney specialise VehicleJourney is unresolved in CEN (issue #292)." .
+    skos:scopeNote "Deliberately NOT rdfs:subClassOf: a DatedServiceJourney references a ServiceJourney rather than inheriting its identity, so a reasoner must not conclude that a DSJ IS-A ServiceJourney." .
 
 entur:DatedServiceJourney entur:specializes nordic:ServiceJourney .
+
+entur:VehicleJourneyNote a skos:Concept ;
+    rdfs:seeAlso netex:VehicleJourney ;
+    skos:scopeNote "VehicleJourney is deliberately not connected via rdfs:subClassOf or entur:specializes to ServiceJourney or DatedServiceJourney. NeTEx inherits this ambiguity from Transmodel: whether DatedServiceJourney/DatedVehicleJourney are true specializations of VehicleJourney is unresolved in CEN (issue #292). This ontology represents the gap rather than overclaiming a hierarchy that the standard itself does not formalize." .
 
 entur:DatedServiceJourney nordic:referencedBySIRI siri:SIRI_ET , siri:SIRI_VM , siri:SIRI_SX , siri:SIRI_FM ;
     rdfs:comment "Via DatedVehicleJourneyRef in all services" .
@@ -519,6 +523,21 @@ entur:step1 a owl:ObjectProperty ; rdfs:label "step1" .
 entur:step2 a owl:ObjectProperty ; rdfs:label "step2" .
 entur:step3 a owl:ObjectProperty ; rdfs:label "step3" .
 entur:step4 a owl:ObjectProperty ; rdfs:label "step4" .
+entur:step5 a owl:ObjectProperty ; rdfs:label "step5" .
+
+## Extends nordic:TimetableChain (which ends at ServiceJourney) with DSJ.
+entur:TimetableChain rdfs:comment """
+    Line → Route → JourneyPattern → ServiceJourney → DatedServiceJourney
+    The core modelling chain: from abstract line identity
+    through physical route, stop sequence, timed trip template,
+    to a concrete instance on a specific date.
+""" ;
+    rdfs:seeAlso nordic:TimetableChain ;
+    entur:step1 netex:Line ;
+    entur:step2 netex:Route ;
+    entur:step3 netex:JourneyPattern ;
+    entur:step4 netex:ServiceJourney ;
+    entur:step5 netex:DatedServiceJourney .
 
 entur:OrganisationChain rdfs:comment """
     Authority → Contract → Operator → ResponsibilitySet
@@ -647,9 +666,9 @@ entur:ENT_DatedServiceJourneyShape a sh:NodeShape ;
         sh:in ( "planned" "cancellation" "replaced" "extraJourney" )
     ] .
 
-## FareZone is in the Nordic allowlist without field rules; Entur's
-## field rules live on entur:FareZone. This shape replaces the former
-## profile:NP_FareZoneShape, which wrongly lived in the shared netex-nordic.ttl.
+## FareZone is Entur-scoped (not part of the Nordic Profile). This
+## shape replaces the former profile:NP_FareZoneShape, which wrongly lived
+## in the shared netex-nordic.ttl.
 entur:ENT_FareZoneShape a sh:NodeShape ;
     sh:targetClass netex:FareZone ;
     rdfs:label "FareZone — Entur constraints" ;
