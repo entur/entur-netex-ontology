@@ -173,6 +173,23 @@ def main() -> int:
         )
         return 1
 
+    # scoped_nodes() skips non-IRI subjects, so blank profile nodes would vanish silently.
+    blank = {
+        subject
+        for subject in (
+            *graph.subjects(RDF_TYPE, PROFILE_CLASS_NODE),
+            *graph.subjects(SCOPE, ENTUR_PROFILE),
+        )
+        if not isinstance(subject, URIRef)
+    }
+    if blank:
+        print(
+            f"ERROR: {len(blank)} profile:ProfileClass-/Entur-scope-node(r) er blanke noder; "
+            "profilnoder må ha en IRI",
+            file=sys.stderr,
+        )
+        return 1
+
     entur_nodes = scoped_nodes(graph, ENTUR_PROFILE)
     on_netex = sorted(node for node in entur_nodes if str(node).startswith(NETEX))
     if on_netex:
