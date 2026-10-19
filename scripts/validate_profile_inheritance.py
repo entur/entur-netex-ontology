@@ -187,8 +187,10 @@ def main() -> int:
 
     malformed = sorted(
         node
-        for node, targets in entur_nodes.items()
-        if len(targets) != 1 or (node, RDF_TYPE, PROFILE_CLASS_NODE) not in graph
+        for node in entur_nodes
+        if len(list(graph.objects(node, ON_CLASS))) != 1
+        or len(entur_nodes[node]) != 1
+        or (node, RDF_TYPE, PROFILE_CLASS_NODE) not in graph
     )
     if malformed:
         print(
@@ -196,6 +198,18 @@ def main() -> int:
             file=sys.stderr,
         )
         for node in malformed:
+            print(str(node), file=sys.stderr)
+        return 1
+
+    # Without Entur scope an entur:X node silently drops out of effective membership.
+    unscoped = sorted(
+        node
+        for node in graph.subjects(RDF_TYPE, PROFILE_CLASS_NODE)
+        if str(node).startswith(ENTUR) and node not in entur_nodes
+    )
+    if unscoped:
+        print("ERROR: Entur-eide ProfileClass-noder mangler profile:scope profile:Entur:", file=sys.stderr)
+        for node in unscoped:
             print(str(node), file=sys.stderr)
         return 1
 
