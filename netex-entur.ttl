@@ -36,6 +36,7 @@
 ## profile.
 profile:Entur a profile:Scope , nordic:Profile ;
     rdfs:label "Entur Profile" ;
+    skos:prefLabel "Entur"@en ;
     nordic:extendsProfile profile:NP .
 
 ## Profile declarations use the shared profile: vocabulary. Each Entur
@@ -70,48 +71,56 @@ entur:CompoundTrain a profile:ProfileClass ;
     profile:element "@id" ;
     profile:path "CompoundTrain/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the CompoundTrain"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:CompoundTrain ;
     profile:element "@version" ;
     profile:path "CompoundTrain/@version" ;
     profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:CompoundTrain ;
     profile:element "Name" ;
     profile:path "CompoundTrain/Name" ;
     profile:cardinality "0..1" ;
+    skos:definition "Descriptive name for the formation"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:CompoundTrain ;
     profile:element "components" ;
     profile:path "CompoundTrain/components" ;
     profile:cardinality "1..1" ;
+    skos:definition "Collection of Train units in this formation"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:CompoundTrain ;
     profile:element "TrainInCompoundTrain/@id" ;
     profile:path "CompoundTrain/components/TrainInCompoundTrain/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Identifier for each position in the formation"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:CompoundTrain ;
     profile:element "@order" ;
     profile:path "CompoundTrain/components/TrainInCompoundTrain/@order" ;
     profile:cardinality "1..1" ;
+    skos:definition "Position order within the compound formation"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:CompoundTrain ;
     profile:element "Train@ref" ;
     profile:path "CompoundTrain/components/TrainInCompoundTrain/TrainRef/@ref" ;
     profile:cardinality "1..1" ;
+    skos:definition "Reference to the Train unit at this position"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:CompoundTrain ;
     profile:element "Label" ;
     profile:path "CompoundTrain/components/TrainInCompoundTrain/Label" ;
     profile:cardinality "0..1" ;
+    skos:definition "Label for the train unit (e.g. \"Enhet A\")"@en ;
     entur:provenance entur:Baseline .
 
 ## --- Contract (Entur) ---
@@ -125,48 +134,56 @@ entur:Contract a profile:ProfileClass ;
     profile:element "@id" ;
     profile:path "Contract/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the Contract"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Contract ;
     profile:element "@version" ;
     profile:path "Contract/@version" ;
     profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Contract ;
     profile:element "Name" ;
     profile:path "Contract/Name" ;
     profile:cardinality "0..1" ;
+    skos:definition "Human-readable name of the contract"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Contract ;
     profile:element "ContractType" ;
     profile:path "Contract/ContractType" ;
     profile:cardinality "0..1" ;
+    skos:definition "Form of contract (written, oral, formal)"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Contract ;
     profile:element "LegalStatus" ;
     profile:path "Contract/LegalStatus" ;
     profile:cardinality "0..1" ;
+    skos:definition "Legal standing of the contract"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Contract ;
     profile:element "ContractGoverningLaw" ;
     profile:path "Contract/ContractGoverningLaw" ;
     profile:cardinality "0..1" ;
+    skos:definition "Jurisdiction or legal code governing the contract"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Contract ;
     profile:element "Authority@ref" ;
     profile:path "Contract/contractees/OrganisationRef/@ref" ;
     profile:cardinality "0..n" ;
+    skos:definition "Client-side organisation (contractee)"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Contract ;
     profile:element "Operator@ref" ;
     profile:path "Contract/contractors/OrganisationRef/@ref" ;
     profile:cardinality "0..n" ;
+    skos:definition "Supplier-side organisation (contractor)"@en ;
     entur:provenance entur:Baseline .
 
 ## --- DatedServiceJourney (Entur) ---
@@ -180,12 +197,14 @@ entur:DatedServiceJourney a profile:ProfileClass ;
     profile:element "@id" ;
     profile:path "DatedServiceJourney/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the dated journey instance."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "@version" ;
     profile:path "DatedServiceJourney/@version" ;
     profile:cardinality "1..1" ;
+    skos:definition "Version number of the object."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
@@ -198,30 +217,35 @@ entur:DatedServiceJourney a profile:ProfileClass ;
     profile:element "OperatingDay/@ref" ;
     profile:path "operatingDayRef" ;
     profile:cardinality "1..1" ;
+    skos:definition "Reference to the OperatingDay anchoring the date of operation."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "TrainBlock/@ref" ;
     profile:path "BlockRef/@ref" ;
     profile:cardinality "0..1" ;
+    skos:definition "Reference to an operational Block/TrainBlock."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "ServiceAlteration" ;
     profile:path "ServiceAlteration" ;
     profile:cardinality "0..1" ;
+    skos:definition "Deviation type. Allowed values: `planned` · `cancellation` · `replaced` · `extraJourney`. Omitted implies `planned`."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "replacedJourneys" ;
     profile:path "replacedJourneys" ;
     profile:cardinality "0..1" ;
+    skos:definition "Container for references to journeys being replaced or reinforced."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "DatedVehicleJourney/@ref" ;
     profile:path "replacedJourneys/DatedVehicleJourneyRef/@ref" ;
     profile:cardinality "0..n" ;
+    skos:definition "References to journeys being replaced/reinforced."@en ;
     entur:provenance entur:Baseline .
 
 ## --- FareContract (Entur — fare profile still a draft) ---
@@ -235,48 +259,56 @@ entur:FareContract a profile:ProfileClass ;
     profile:element "@id" ;
     profile:path "FareContract/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the FareContract"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareContract ;
     profile:element "@version" ;
     profile:path "FareContract/@version" ;
     profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareContract ;
     profile:element "TypeOfFareContractRef/@ref" ;
     profile:path "FareContract/TypeOfFareContractRef/@ref" ;
     profile:cardinality "1..1" ;
+    skos:definition "Classifies the contract type (e.g., standard, subscription)"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareContract ;
     profile:element "CustomerAccountRef/@ref" ;
     profile:path "FareContract/CustomerAccountRef/@ref" ;
     profile:cardinality "0..1" ;
+    skos:definition "Link to the customer account"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareContract ;
     profile:element "FareContractEntry/@id" ;
     profile:path "FareContract/fareContractEntries/FareContractEntry/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the entry"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareContract ;
     profile:element "FareContractEntry/@version" ;
     profile:path "FareContract/fareContractEntries/FareContractEntry/@version" ;
     profile:cardinality "1..1" ;
+    skos:definition "Version label for the entry"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareContract ;
     profile:element "CustomerPurchasePackageRef/@ref" ;
     profile:path "FareContract/fareContractEntries/FareContractEntry/CustomerPurchasePackageRef/@ref" ;
     profile:cardinality "1..1" ;
+    skos:definition "Reference to the purchased package"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareContract ;
     profile:element "TravelSpecificationRef/@ref" ;
     profile:path "FareContract/fareContractEntries/FareContractEntry/TravelSpecificationRef/@ref" ;
     profile:cardinality "0..1" ;
+    skos:definition "Optional travel scope constraint"@en ;
     entur:provenance entur:Baseline .
 
 ## --- FareZone (Entur — fare profile still a draft) ---
@@ -290,36 +322,42 @@ entur:FareZone a profile:ProfileClass ;
     profile:element "@id" ;
     profile:path "FareZone/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the fare zone"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareZone ;
     profile:element "@version" ;
     profile:path "FareZone/@version" ;
     profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareZone ;
     profile:element "Name" ;
     profile:path "FareZone/Name" ;
     profile:cardinality "1..1" ;
+    skos:definition "Human-readable zone name"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareZone ;
     profile:element "Description" ;
     profile:path "FareZone/Description" ;
     profile:cardinality "0..1" ;
+    skos:definition "Optional description of the zone's scope"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareZone ;
     profile:element "members" ;
     profile:path "FareZone/members" ;
     profile:cardinality "0..1" ;
+    skos:definition "Collection of stop points in this zone"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:FareZone ;
     profile:element "ScheduledStopPoint/@ref" ;
     profile:path "FareZone/members/ScheduledStopPointRef/@ref" ;
     profile:cardinality "0..n" ;
+    skos:definition "Reference to a stop point belonging to this zone"@en ;
     entur:provenance entur:Baseline .
 
 ## --- Train (Entur) ---
@@ -333,90 +371,105 @@ entur:Train a profile:ProfileClass ;
     profile:element "@id" ;
     profile:path "Train/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the Train"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "@version" ;
     profile:path "Train/@version" ;
     profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "Name" ;
     profile:path "Train/Name" ;
     profile:cardinality "0..1" ;
+    skos:definition "Descriptive name (e.g. \"NSB Type 72\")"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "TrainSize" ;
     profile:path "Train/TrainSize" ;
     profile:cardinality "0..1" ;
+    skos:definition "Overall size information"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "NumberOfCars" ;
     profile:path "Train/TrainSize/NumberOfCars" ;
     profile:cardinality "0..1" ;
+    skos:definition "Number of carriages in the train unit"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "TrainSizeType" ;
     profile:path "Train/TrainSize/TrainSizeType" ;
     profile:cardinality "0..1" ;
+    skos:definition "Size classification (normal, short, long)"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "components" ;
     profile:path "Train/components" ;
     profile:cardinality "0..1" ;
+    skos:definition "Collection of train components (carriages)"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "TrainComponent/@id" ;
     profile:path "Train/components/TrainComponent/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Component identifier"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "@order" ;
     profile:path "Train/components/TrainComponent/@order" ;
     profile:cardinality "1..1" ;
+    skos:definition "Position order within the train"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "Label" ;
     profile:path "Train/components/TrainComponent/Label" ;
     profile:cardinality "0..1" ;
+    skos:definition "Component label (e.g. \"Vogn 1\")"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "TrainElement/@id" ;
     profile:path "Train/components/TrainComponent/TrainElement/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Train element identifier"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "TrainElementType" ;
     profile:path "Train/components/TrainComponent/TrainElement/TrainElementType" ;
     profile:cardinality "0..1" ;
+    skos:definition "Type of element (carriage, locomotive, etc.)"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "FareClasses" ;
     profile:path "Train/components/TrainComponent/TrainElement/FareClasses" ;
     profile:cardinality "0..1" ;
+    skos:definition "Fare class (standardClass, firstClass, etc.)"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "SeatingCapacity" ;
     profile:path "Train/components/TrainComponent/TrainElement/PassengerCapacity/SeatingCapacity" ;
     profile:cardinality "0..1" ;
+    skos:definition "Number of seats"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:Train ;
     profile:element "StandingCapacity" ;
     profile:path "Train/components/TrainComponent/TrainElement/PassengerCapacity/StandingCapacity" ;
     profile:cardinality "0..1" ;
+    skos:definition "Number of standing places"@en ;
     entur:provenance entur:Baseline .
 
 ## --- TrainBlock (Entur) ---
@@ -430,36 +483,42 @@ entur:TrainBlock a profile:ProfileClass ;
     profile:element "@id" ;
     profile:path "Block/@id" ;
     profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the TrainBlock"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "@version" ;
     profile:path "Block/@version" ;
     profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "Name" ;
     profile:path "Block/Name" ;
     profile:cardinality "0..1" ;
+    skos:definition "Human-readable label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "Description" ;
     profile:path "Block/Description" ;
     profile:cardinality "0..1" ;
+    skos:definition "Free-text description of the block"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "Operator@ref" ;
     profile:path "Block/OperatorRef/@ref" ;
     profile:cardinality "0..1" ;
+    skos:definition "Reference to the operating organisation"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "journeys" ;
     profile:path "Block/journeys" ;
     profile:cardinality "0..1" ;
+    skos:definition "Container for VehicleJourneyRef elements linking journeys to this block"@en ;
     entur:provenance entur:Baseline .
 
 ## --- VehicleScheduleFrame (Entur) ---
