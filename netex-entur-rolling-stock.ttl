@@ -42,6 +42,7 @@
 
 svc:RollingStockService a entur:SubProfile ;
     rdfs:label "Rolling Stock Service Profile" ;
+    skos:prefLabel "Rolling Stock Service"@en ;
     skos:definition "Sub-profile for rolling stock planning: train composition, block assignments, facilities, and timetable integration" ;
     entur:basedOn profile:Entur ;
     svc:managedBy entur:PartnerPlass ;

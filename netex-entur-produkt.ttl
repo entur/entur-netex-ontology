@@ -34,6 +34,7 @@
 
 produkt:ProductService a entur:SubProfile ;
     rdfs:label "Produkt — Product Service Profile (skeleton)" ;
+    skos:prefLabel "Products"@en ;
     skos:definition "Sub-profile for the product catalogue (fare products, sales offers). Skeleton — constraints to be confirmed." ;
     entur:basedOn profile:Entur .
 

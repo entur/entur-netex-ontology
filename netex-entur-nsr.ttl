@@ -35,6 +35,7 @@
 
 nsr:StopPlaceRegistry a netex:SubProfile ;
     rdfs:label "NSR — National Stop Place Registry" ;
+    skos:prefLabel "Stop Place Registry"@en ;
     skos:definition "Sub-profile for the authoritative national stop place registry (Tiamat). Produces StopPlace, Quay, TopographicPlace as master data referenced by all operator deliveries." ;
     netex:basedOn profile:Entur ;
     nsr:managedBy entur:CodespaceNSR ;
