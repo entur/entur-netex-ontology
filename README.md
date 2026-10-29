@@ -188,3 +188,7 @@ The ontology can be consumed by any standard RDF/SHACL tooling, e.g.:
 - [W3C RDF Primer](https://www.w3.org/TR/rdf11-primer/) — Introduction to RDF and Turtle syntax
 - [W3C SHACL Specification](https://www.w3.org/TR/shacl/) — Shapes Constraint Language
 - [Transmodel](https://www.transmodel-cen.eu/) — The conceptual model behind NeTEx
+
+## Blocks and concrete specializations
+
+`entur:Block` profiles the general `netex:Block`; `entur:TrainBlock` profiles the concrete `netex:TrainBlock`. Their field paths use their respective XML roots. Both occur in `VehicleScheduleFrame/blocks`. Common fields previously stored under TrainBlock with `Block/` paths are now represented on the correct classes. The invalid direct `OperatorRef` child is removed; this does not specify a replacement operator relationship. Standard inheritance remains defined by the generated base.
