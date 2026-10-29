@@ -472,6 +472,50 @@ entur:Train a profile:ProfileClass ;
     skos:definition "Number of standing places"@en ;
     entur:provenance entur:Baseline .
 
+## --- Block (Entur): general vehicle scheduling block ---
+## Common members split out from the former Block-rooted TrainBlock entries.
+## No new service-specific constraints are introduced here.
+entur:Block a profile:ProfileClass ;
+    profile:onClass netex:Block ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Block ;
+    profile:element "@id" ;
+    profile:path "Block/@id" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the Block"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Block ;
+    profile:element "@version" ;
+    profile:path "Block/@version" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Block ;
+    profile:element "Name" ;
+    profile:path "Block/Name" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Human-readable label"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Block ;
+    profile:element "Description" ;
+    profile:path "Block/Description" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Free-text description of the block"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Block ;
+    profile:element "journeys" ;
+    profile:path "Block/journeys" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Container for VehicleJourneyRef elements linking journeys to this block"@en ;
+    entur:provenance entur:Baseline .
+
 ## --- TrainBlock (Entur) ---
 entur:TrainBlock a profile:ProfileClass ;
     profile:onClass netex:TrainBlock ;
@@ -481,48 +525,49 @@ entur:TrainBlock a profile:ProfileClass ;
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "@id" ;
-    profile:path "Block/@id" ;
+    profile:path "TrainBlock/@id" ;
     profile:cardinality "1..1" ;
     skos:definition "Unique identifier for the TrainBlock"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "@version" ;
-    profile:path "Block/@version" ;
+    profile:path "TrainBlock/@version" ;
     profile:cardinality "1..1" ;
     skos:definition "Version label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "Name" ;
-    profile:path "Block/Name" ;
+    profile:path "TrainBlock/Name" ;
     profile:cardinality "0..1" ;
     skos:definition "Human-readable label"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
     profile:element "Description" ;
-    profile:path "Block/Description" ;
+    profile:path "TrainBlock/Description" ;
     profile:cardinality "0..1" ;
     skos:definition "Free-text description of the block"@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:TrainBlock ;
-    profile:element "Operator@ref" ;
-    profile:path "Block/OperatorRef/@ref" ;
-    profile:cardinality "0..1" ;
-    skos:definition "Reference to the operating organisation"@en ;
-    entur:provenance entur:Baseline .
-[] a profile:ProfileMember ;
-    profile:memberOf entur:TrainBlock ;
     profile:element "journeys" ;
-    profile:path "Block/journeys" ;
+    profile:path "TrainBlock/journeys" ;
     profile:cardinality "0..1" ;
     skos:definition "Container for VehicleJourneyRef elements linking journeys to this block"@en ;
     entur:provenance entur:Baseline .
 
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TrainBlock ;
+    profile:element "coupledJourneys" ;
+    profile:path "TrainBlock/coupledJourneys" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Optional coupled journeys belonging to this train block (NeTEx 2.0)."@en ;
+    entur:provenance entur:Baseline .
+
 ## --- VehicleScheduleFrame (Entur) ---
-## Frame-level membership only; holds TrainBlock. Dropped from the Nordic
+## Frame-level membership only; holds Block and TrainBlock. Dropped from the Nordic
 ## baseline upstream.
 entur:VehicleScheduleFrame a profile:ProfileClass ;
     profile:onClass netex:VehicleScheduleFrame ;
@@ -537,6 +582,7 @@ entur:VehicleScheduleFrame a profile:ProfileClass ;
 ## links them to the Nordic frame nodes without writing on those.
 
 entur:VehicleScheduleFrame nordic:containedIn nordic:CompositeFrame .
+entur:Block nordic:containedIn entur:VehicleScheduleFrame .
 entur:TrainBlock nordic:containedIn entur:VehicleScheduleFrame .
 entur:CompoundTrain nordic:containedIn nordic:ResourceFrame .
 entur:Train nordic:containedIn nordic:ResourceFrame .
@@ -732,7 +778,8 @@ netex:PassengerStopAssignment entur:dataSource entur:OperatorDelivery .
 netex:DestinationDisplay entur:dataSource entur:OperatorDelivery .
 netex:Notice             entur:dataSource entur:OperatorDelivery .
 netex:GroupOfLines       entur:dataSource entur:OperatorDelivery .
-netex:Interchange        entur:dataSource entur:OperatorDelivery .
+netex:ServiceJourneyInterchange entur:dataSource entur:OperatorDelivery .
+netex:Block              entur:dataSource entur:OperatorDelivery .
 netex:TrainBlock         entur:dataSource entur:OperatorDelivery .
 netex:Vehicle            entur:dataSource entur:OperatorDelivery .
 netex:VehicleType        entur:dataSource entur:OperatorDelivery .
