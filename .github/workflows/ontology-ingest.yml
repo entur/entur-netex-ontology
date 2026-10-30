@@ -187,6 +187,8 @@ jobs:
               echo '```'
               echo "$NEWLY"
               echo '```'
+              echo ""
+              echo "**Godkjenning:** når endringene er gjennomgått, sett etiketten \`reviewed\` på PR-en (eller kjør workflowen *ontology-review* med PR-nummeret). Valideringen kjøres da på nytt, og \`validate\` blir grønn hvis den består."
             fi
           } > "$BODY"
           echo "path=$BODY" >> "$GITHUB_OUTPUT"
@@ -219,6 +221,13 @@ jobs:
             -f state="$state" \
             -f context="validate" \
             -f description="profile and coupling gate: ok=$OK"
+
+      - name: Fjern tidligere godkjenning når PR-en holdes tilbake
+        # Nye oppstrøms-endringer på samme PR-branch krever ny gjennomgang.
+        if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.ok != 'true' && steps.cpr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr edit "${{ steps.cpr.outputs.pull-request-number }}" --remove-label reviewed || true
 
       - name: Aktiver auto-merge (grønt)
         if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.ok == 'true' && steps.cpr.outputs.pull-request-number
