@@ -1,0 +1,81 @@
+name: ontology-review
+
+# Godkjenning av oppstrøms-PR-er etter manuell gjennomgang.
+#
+# ontology-ingest holder en bump tilbake (validate = failure) når Nordic TTL-filer,
+# profilmedlemskap eller koblinger endres. Etter gjennomgang godkjennes PR-en ved å
+# sette etiketten «reviewed», eller ved å kjøre denne workflowen manuelt med
+# PR-nummeret. Workflowen kjører da den samme valideringen som validate.yml på
+# PR-ens head-commit, og poster «validate» = success hvis den består.
+#
+# Kun PR-er fra ontology-ingest/upstream kan godkjennes slik, og bare av noen med
+# skrivetilgang. Når ontology-ingest oppdaterer PR-en med nye oppstrøms-endringer,
+# fjernes «reviewed» igjen, så nye endringer krever ny gjennomgang.
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "Nummer på oppstrøms-PR-en som er gjennomgått"
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  statuses: write
+
+env:
+  INGEST_BRANCH: ontology-ingest/upstream
+
+jobs:
+  approve:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'reviewed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finn PR og kontroller at den kan godkjennes
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number || inputs.pr }}
+          ACTOR: ${{ github.event.sender.login || github.actor }}
+        run: |
+          read -r head_ref head_sha < <(gh api "repos/${{ github.repository }}/pulls/$PR" --jq '"\(.head.ref) \(.head.sha)"')
+          if [ "$head_ref" != "$INGEST_BRANCH" ]; then
+            echo "PR #$PR kommer fra $head_ref, ikke $INGEST_BRANCH — godkjennes ikke her."
+            exit 1
+          fi
+          permission=$(gh api "repos/${{ github.repository }}/collaborators/$ACTOR/permission" --jq .permission)
+          case "$permission" in
+            admin|maintain|write) ;;
+            *) echo "$ACTOR har tilgangen «$permission» — skrivetilgang kreves."; exit 1 ;;
+          esac
+          echo "sha=$head_sha" >> "$GITHUB_OUTPUT"
+          echo "actor=$ACTOR" >> "$GITHUB_OUTPUT"
+          echo "number=$PR" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout PR-ens head-commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.2.2
+        with:
+          ref: ${{ steps.pr.outputs.sha }}
+          submodules: recursive
+
+      - name: Parse alle Entur-lag (.ttl)
+        run: |
+          python3 -m pip install --quiet rdflib
+          python3 scripts/validate_ttl.py netex-entur*.ttl
+
+      - name: Valider profilinheritance og effektiv allowlist
+        run: python3 scripts/validate_profile_inheritance.py
+
+      - name: Poster «validate» = success
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.pr.outputs.sha }}
+          ACTOR: ${{ steps.pr.outputs.actor }}
+        run: |
+          gh api --method POST "repos/${{ github.repository }}/statuses/$SHA" \
+            -f state=success \
+            -f context=validate \
+            -f description="reviewed by $ACTOR; validation passed"
