@@ -209,41 +209,41 @@ entur:DatedServiceJourney a profile:ProfileClass ;
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "Journey/@ref" ;
-    profile:path "journeyRef" ;
+    profile:path "DatedServiceJourney/ServiceJourneyRef/@ref" ;
     profile:cardinality "1..1" ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "OperatingDay/@ref" ;
-    profile:path "operatingDayRef" ;
+    profile:path "DatedServiceJourney/OperatingDayRef/@ref" ;
     profile:cardinality "1..1" ;
     skos:definition "Reference to the OperatingDay anchoring the date of operation."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "TrainBlock/@ref" ;
-    profile:path "BlockRef/@ref" ;
+    profile:path "DatedServiceJourney/BlockRef/@ref" ;
     profile:cardinality "0..1" ;
     skos:definition "Reference to an operational Block/TrainBlock."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "ServiceAlteration" ;
-    profile:path "ServiceAlteration" ;
+    profile:path "DatedServiceJourney/ServiceAlteration" ;
     profile:cardinality "0..1" ;
     skos:definition "Deviation type. Allowed values: `planned` · `cancellation` · `replaced` · `extraJourney`. Omitted implies `planned`."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "replacedJourneys" ;
-    profile:path "replacedJourneys" ;
+    profile:path "DatedServiceJourney/replacedJourneys" ;
     profile:cardinality "0..1" ;
     skos:definition "Container for references to journeys being replaced or reinforced."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
     profile:memberOf entur:DatedServiceJourney ;
     profile:element "DatedVehicleJourney/@ref" ;
-    profile:path "replacedJourneys/DatedVehicleJourneyRef/@ref" ;
+    profile:path "DatedServiceJourney/replacedJourneys/DatedVehicleJourneyRef/@ref" ;
     profile:cardinality "0..n" ;
     skos:definition "References to journeys being replaced/reinforced."@en ;
     entur:provenance entur:Baseline .
