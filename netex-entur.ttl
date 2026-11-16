@@ -54,6 +54,11 @@ entur:Baseline a entur:Provenance ;
     rdfs:label "Entur baseline" ;
     skos:definition "An initial Entur profile rule not yet tracked to a separate decision" .
 
+entur:replacedBy a owl:ObjectProperty ;
+    rdfs:label "replaced by" ;
+    rdfs:domain profile:ProfileClass ;
+    skos:definition "The standard class Entur uses instead of the class this profile node excludes" .
+
 ## =================================================================
 ## ENTUR PROFILE CLASSES AND FIELD DEFINITIONS
 ## =================================================================
@@ -358,6 +363,41 @@ entur:FareZone a profile:ProfileClass ;
     profile:path "FareZone/members/ScheduledStopPointRef/@ref" ;
     profile:cardinality "0..n" ;
     skos:definition "Reference to a stop point belonging to this zone"@en ;
+    entur:provenance entur:Baseline .
+
+## --- TariffZone (Entur): not used in Norway ---
+## The Nordic Profile keeps TariffZone for the countries that use it. In
+## Norway it was replaced by FareZone, so Entur excludes it: no TariffZone
+## objects, and no TariffZoneRef where a StopPlace lists its zones.
+entur:TariffZone a profile:ProfileClass ;
+    profile:onClass netex:TariffZone ;
+    profile:scope profile:Entur ;
+    entur:replacedBy netex:FareZone ;
+    skos:scopeNote "Not used in Norway. TariffZone was deprecated in favour of FareZone in 2022 and its references were removed from Entur's StopPlace, Geocoder and Journey Planner APIs on 2026-11-17. It stays in the Nordic Profile for the countries that still use it. Compare the NSR export shapes: TariffZone carries a name, a polygon, a validity and keys; FareZone adds the authority, scoping method, zone topology, members and neighbours."@en ;
+    skos:historyNote "2022: deprecated in favour of FareZone. 2026-11-17 12:00: TariffZone references removed from the StopPlace, Geocoder and Journey Planner APIs."@en ;
+    skos:editorialNote "TariffZone har ingen metadata. Det er bare navn og id. FareZone er mer juicy."@no ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TariffZone ;
+    profile:element "@id" ;
+    profile:path "TariffZone/@id" ;
+    profile:cardinality "0..0" ;
+    skos:definition "No TariffZone in Norwegian data; use FareZone"@en ;
+    entur:provenance entur:Baseline .
+
+## --- StopPlace (Entur): zones are FareZones ---
+entur:StopPlace a profile:ProfileClass ;
+    profile:onClass netex:StopPlace ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:StopPlace ;
+    profile:element "TariffZoneRef" ;
+    profile:path "StopPlace/tariffZones/TariffZoneRef" ;
+    profile:cardinality "0..0" ;
+    skos:definition "A StopPlace lists its zones as FareZoneRef; TariffZoneRef is not used in Norway (see entur:TariffZone)"@en ;
     entur:provenance entur:Baseline .
 
 ## --- Train (Entur) ---
