@@ -387,7 +387,7 @@ entur:TariffZone a profile:ProfileClass ;
     profile:element "@id" ;
     profile:path "TariffZone/@id" ;
     profile:cardinality "0..0" ;
-    skos:definition "No TariffZone in Norwegian data; use FareZone"@en ;
+    skos:definition "Not used in Norway: use FareZone (see entur:TariffZone)"@en ;
     entur:provenance entur:Baseline .
 
 ## --- StopPlace (Entur): zones are FareZones ---
@@ -398,10 +398,10 @@ entur:StopPlace a profile:ProfileClass ;
 
 [] a profile:ProfileMember ;
     profile:memberOf entur:StopPlace ;
-    profile:element "TariffZoneRef" ;
-    profile:path "StopPlace/tariffZones/TariffZoneRef" ;
+    profile:element "TariffZoneRef/@ref" ;
+    profile:path "StopPlace/tariffZones/TariffZoneRef/@ref" ;
     profile:cardinality "0..0" ;
-    skos:definition "A StopPlace lists its zones as FareZoneRef; TariffZoneRef is not used in Norway (see entur:TariffZone)"@en ;
+    skos:definition "Not used in Norway: a StopPlace lists its zones as FareZoneRef (see entur:TariffZone)"@en ;
     entur:provenance entur:Baseline .
 
 ## --- Train (Entur) ---
