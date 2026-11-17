@@ -168,7 +168,7 @@ nsr:NSR_StopPlaceShape a sh:NodeShape ;
     ] , [
         sh:path netex:tariffZones ;
         sh:name "tariffZones" ;
-        sh:description "FareZoneRef (operator codespace). TariffZoneRef is not used since 2026-11-17; see entur:TariffZone"
+        sh:description "TariffZoneRef / FareZoneRef (operator codespace)"
     ] , [
         sh:path netex:placeEquipments ;
         sh:maxCount 1 ;
@@ -349,13 +349,9 @@ nsr:NSR_FareZoneShape a sh:NodeShape ;
         sh:name "neighbours"
     ] .
 
-## Kept as a record of what NSR exported, but no longer applied: NSR stopped
-## exporting TariffZone on 2026-11-17 (see entur:TariffZone in netex-entur.ttl).
 nsr:NSR_TariffZoneShape a sh:NodeShape ;
     sh:targetClass netex:TariffZone ;
-    rdfs:label "TariffZone — NSR export constraints (no longer exported)" ;
-    sh:deactivated true ;
-    sh:description "NSR exported TariffZone until 2026-11-17, when TariffZone was removed from Entur's APIs in favour of FareZone." ;
+    rdfs:label "TariffZone — NSR export constraints" ;
     sh:property [
         sh:path netex:name ;
         sh:name "Name"
