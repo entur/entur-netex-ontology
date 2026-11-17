@@ -453,6 +453,311 @@ entur:StopPlace a profile:ProfileClass ;
     skos:definition "Not used in Norway: a StopPlace lists its zones as FareZoneRef (see entur:TariffZone)"@en ;
     entur:provenance entur:Baseline .
 
+## --- FlexibleLine (Entur): flexible and on-demand lines ---
+## The Nordic Profile does not use FlexibleLine ("use Line with
+## FlexibleServiceProperties"); Entur receives flexible lines from NPlan and
+## the operator portal (Antu's FLEX profiles). Antu checks Line and
+## FlexibleLine with the same LINE_* and transport mode rules, so the Nordic
+## Line members are mirrored here; keep them in step with nordic:Line.
+entur:FlexibleLine a profile:ProfileClass ;
+    profile:onClass netex:FlexibleLine ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "@id" ;
+    profile:path "FlexibleLine/@id" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the Line (e.g., NP:Line:5)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "@version" ;
+    profile:path "FlexibleLine/@version" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "Name" ;
+    profile:path "FlexibleLine/Name" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Human-readable line name"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "TransportMode" ;
+    profile:path "FlexibleLine/TransportMode" ;
+    profile:cardinality "1..1" ;
+    profile:allowedValues ( "coach" "bus" "tram" "rail" "metro" "air" "taxi" "water" "cableway" "funicular" "snowAndIce" "unknown" ) ;
+    skos:definition "Primary transport mode (bus, rail, water, tram, metro, air, coach, cableway) (Antu TRANSPORT_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "TransportSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode" ;
+    profile:cardinality "1..1" ;
+    profile:severity sh:Warning ;
+    skos:definition "Transport submode container (Antu LINE_5)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "BusSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/BusSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "airportLinkBus" "expressBus" "localBus" "nightBus" "railReplacementBus" "regionalBus" "schoolBus" "sightseeingBus" "shuttleBus" "unknown" ) ;
+    skos:definition "Bus submode (localBus, regionalBus, expressBus, etc.) (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "OperatorRef/@ref" ;
+    profile:path "FlexibleLine/OperatorRef/@ref" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Reference to the Operator running this Line"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "PublicCode" ;
+    profile:path "FlexibleLine/PublicCode" ;
+    profile:cardinality "1..1" ;
+    profile:severity sh:Warning ;
+    skos:definition "Public-facing line number or code (Antu LINE_3)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "PrivateCode" ;
+    profile:path "FlexibleLine/PrivateCode" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Internal non-public code"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "RepresentedByGroupRef/@ref" ;
+    profile:path "FlexibleLine/RepresentedByGroupRef/@ref" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Reference to the Network or GroupOfLines this line belongs to (Antu LINE_7)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "Monitored" ;
+    profile:path "FlexibleLine/Monitored" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Whether the line is tracked by a real-time monitoring system"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "Colour" ;
+    profile:path "FlexibleLine/Presentation/Colour" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Line colour as 6-digit uppercase hex (e.g., 005EB8)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "TextColour" ;
+    profile:path "FlexibleLine/Presentation/TextColour" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Text colour as 6-digit uppercase hex (e.g., FFFFFF)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "AirSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/AirSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "helicopterService" "domesticFlight" "internationalFlight" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "CoachSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/CoachSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "internationalCoach" "nationalCoach" "touristCoach" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "FunicularSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/FunicularSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "funicular" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "MetroSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/MetroSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "metro" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "RailSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/RailSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "international" "interregionalRail" "local" "longDistance" "nightRail" "airportLinkRail" "regionalRail" "touristRailway" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "SelfDriveSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/SelfDriveSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "SnowAndIceSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/SnowAndIceSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "snowCoach" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "TaxiSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/TaxiSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "charterTaxi" "communalTaxi" "waterTaxi" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "TelecabinSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/TelecabinSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "telecabin" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "TramSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/TramSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "localTram" "cityTram" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "WaterSubmode" ;
+    profile:path "FlexibleLine/TransportSubmode/WaterSubmode" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "highSpeedPassengerService" "highSpeedVehicleService" "internationalCarFerry" "internationalPassengerFerry" "localCarFerry" "localPassengerFerry" "nationalCarFerry" "sightseeingService" "unknown" ) ;
+    skos:definition "Transport submode (Antu TRANSPORT_SUB_MODE_ON_LINE)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "FlexibleLineType" ;
+    profile:path "FlexibleLine/FlexibleLineType" ;
+    profile:cardinality "1..1" ;
+    profile:allowedValues ( "corridorService" "mainRouteWithFlexibleEnds" "flexibleAreasOnly" "hailAndRideSections" "fixedStopAreaWide" "mixedFlexible" "mixedFlexibleAndFixed" "fixed" ) ;
+    skos:definition "How the line is flexible; required (Antu FLEXIBLE_LINE_1), one of the eight types Entur accepts (Antu FLEXIBLE_LINE_8)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "BookingAccess" ;
+    profile:path "FlexibleLine/BookingAccess" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "public" "authorisedPublic" "staff" ) ;
+    skos:definition "Who may book (Antu BOOKING_1)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "BookWhen" ;
+    profile:path "FlexibleLine/BookWhen" ;
+    profile:cardinality "0..1" ;
+    profile:allowedValues ( "dayOfTravelOnly" "untilPreviousDay" "advanceAndDayOfTravel" ) ;
+    skos:definition "When a booking can be made (Antu BOOKING_3)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "BookingMethods" ;
+    profile:path "FlexibleLine/BookingMethods" ;
+    profile:cardinality "0..1" ;
+    skos:definition "How to book, as a whitespace-separated list (values checked by Antu BOOKING_2)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "BuyWhen" ;
+    profile:path "FlexibleLine/BuyWhen" ;
+    profile:cardinality "0..1" ;
+    skos:definition "When to pay, as a whitespace-separated list (values checked by Antu BUY_WHEN_1)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "LatestBookingTime" ;
+    profile:path "FlexibleLine/LatestBookingTime" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Latest time a booking can be made, used together with BookWhen"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "MinimumBookingPeriod" ;
+    profile:path "FlexibleLine/MinimumBookingPeriod" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Minimum time before travel a booking must be made"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:FlexibleLine ;
+    profile:element "BookingNote" ;
+    profile:path "FlexibleLine/BookingNote" ;
+    profile:cardinality "0..1" ;
+    skos:definition "Booking instructions for passengers"@en ;
+    entur:provenance entur:Baseline .
+
+## --- DeadRun (Entur): a vehicle running without passengers ---
+## Part of vehicle scheduling, with Block and TrainBlock.
+entur:DeadRun a profile:ProfileClass ;
+    profile:onClass netex:DeadRun ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DeadRun ;
+    profile:element "@id" ;
+    profile:path "DeadRun/@id" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Unique identifier for the dead run"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DeadRun ;
+    profile:element "@version" ;
+    profile:path "DeadRun/@version" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Version label"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DeadRun ;
+    profile:element "JourneyPatternRef/@ref" ;
+    profile:path "DeadRun/JourneyPatternRef/@ref" ;
+    profile:cardinality "1..1" ;
+    skos:definition "The journey pattern the dead run follows; required (Antu DEAD_RUN_2)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DeadRun ;
+    profile:element "dayTypes" ;
+    profile:path "DeadRun/dayTypes" ;
+    profile:cardinality "1..1" ;
+    skos:definition "The day types the dead run runs on; required (Antu DEAD_RUN_3)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DeadRun ;
+    profile:element "DayTypeRef/@ref" ;
+    profile:path "DeadRun/dayTypes/DayTypeRef/@ref" ;
+    profile:cardinality "1..n" ;
+    skos:definition "Reference to a day type (Antu DEAD_RUN_3)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:DeadRun ;
+    profile:element "passingTimes" ;
+    profile:path "DeadRun/passingTimes" ;
+    profile:cardinality "1..1" ;
+    profile:severity sh:Info ;
+    skos:definition "The dead run's passing times; a missing value is reported as information (Antu DEAD_RUN_1)"@en ;
+    entur:provenance entur:Baseline .
+
 ## --- Train (Entur) ---
 entur:Train a profile:ProfileClass ;
     profile:onClass netex:Train ;
@@ -703,6 +1008,8 @@ entur:VehicleScheduleFrame nordic:containedIn nordic:CompositeFrame .
 entur:Block nordic:containedIn entur:VehicleScheduleFrame .
 entur:TrainBlock nordic:containedIn entur:VehicleScheduleFrame .
 entur:CompoundTrain nordic:containedIn nordic:ResourceFrame .
+entur:FlexibleLine nordic:containedIn nordic:ServiceFrame .
+entur:DeadRun nordic:containedIn nordic:TimetableFrame .
 entur:Train nordic:containedIn nordic:ResourceFrame .
 entur:DatedServiceJourney nordic:containedIn nordic:TimetableFrame .
 entur:FareZone nordic:containedIn nordic:FareFrame .
