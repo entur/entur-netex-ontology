@@ -130,6 +130,25 @@ entur:FareZone_CardinalityShape a sh:NodeShape ;
             sh:path <https://netex-cen.eu/ontology#@version> ] ;
     sh:targetClass netex:FareZone .
 
+entur:StopPlace_CardinalityShape a sh:NodeShape ;
+    rdfs:label "StopPlace: generated from profile:cardinality" ;
+    sh:property [ sh:name "tariffZones" ;
+            sh:node [ a sh:NodeShape ;
+                    sh:property [ sh:description "StopPlace/tariffZones/TariffZoneRef/@ref is 0..0 in the profile; the XSD allows 0..n." ;
+                            sh:maxCount 0 ;
+                            sh:name "TariffZoneRef" ;
+                            sh:path netex:tariffZoneRef ] ] ;
+            sh:path netex:tariffZones ] ;
+    sh:targetClass netex:StopPlace .
+
+entur:TariffZone_CardinalityShape a sh:NodeShape ;
+    rdfs:label "TariffZone: generated from profile:cardinality" ;
+    sh:property [ sh:description "TariffZone/@id is 0..0 in the profile; the XSD allows 0..1." ;
+            sh:maxCount 0 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ] ;
+    sh:targetClass netex:TariffZone .
+
 entur:TrainBlock_CardinalityShape a sh:NodeShape ;
     rdfs:label "TrainBlock: generated from profile:cardinality" ;
     sh:property [ sh:description "TrainBlock/@id is 1..1 in the profile; the XSD allows 0..1." ;
