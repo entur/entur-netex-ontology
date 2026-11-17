@@ -556,8 +556,8 @@ entur:Block a profile:ProfileClass ;
     profile:memberOf entur:Block ;
     profile:element "journeys" ;
     profile:path "Block/journeys" ;
-    profile:cardinality "0..1" ;
-    skos:definition "Container for VehicleJourneyRef elements linking journeys to this block"@en ;
+    profile:cardinality "1..1" ;
+    skos:definition "Container for VehicleJourneyRef elements linking journeys to this block; required, a block without journeys is an error (Antu BLOCK_2)"@en ;
     entur:provenance entur:Baseline .
 
 ## --- TrainBlock (Entur) ---
@@ -616,6 +616,23 @@ entur:TrainBlock a profile:ProfileClass ;
 entur:VehicleScheduleFrame a profile:ProfileClass ;
     profile:onClass netex:VehicleScheduleFrame ;
     profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+## --- CompositeFrame (Entur): validity is stated on the frame ---
+## Entur requires validityConditions on every CompositeFrame. The Swedish
+## variant in Antu also accepts ValidBetween, so this is Entur's rule, not
+## the Nordic Profile's.
+entur:CompositeFrame a profile:ProfileClass ;
+    profile:onClass netex:CompositeFrame ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompositeFrame ;
+    profile:element "validityConditions" ;
+    profile:path "CompositeFrame/validityConditions" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Validity conditions that apply to all data in the frame; required (Antu COMPOSITE_FRAME_1)"@en ;
     entur:provenance entur:Baseline .
 
 ## =================================================================

@@ -13,11 +13,23 @@ entur:Block_CardinalityShape a sh:NodeShape ;
             sh:minCount 1 ;
             sh:name "@id" ;
             sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "Block/journeys is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "journeys" ;
+            sh:path netex:journeys ],
         [ sh:description "Block/@version is 1..1 in the profile; the XSD allows 0..1." ;
             sh:minCount 1 ;
             sh:name "@version" ;
             sh:path <https://netex-cen.eu/ontology#@version> ] ;
     sh:targetClass netex:Block .
+
+entur:CompositeFrame_CardinalityShape a sh:NodeShape ;
+    rdfs:label "CompositeFrame: generated from profile:cardinality" ;
+    sh:property [ sh:description "CompositeFrame/validityConditions is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "validityConditions" ;
+            sh:path netex:validityConditions ] ;
+    sh:targetClass netex:CompositeFrame .
 
 entur:CompoundTrain_CardinalityShape a sh:NodeShape ;
     rdfs:label "CompoundTrain: generated from profile:cardinality" ;
