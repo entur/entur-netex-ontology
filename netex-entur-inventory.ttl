@@ -69,7 +69,7 @@ inv:InventoryService inv:consumes
     netex:pointsInSequence ,
     netex:stopPointInJourneyPatternRef ,
     netex:scheduledStopPointRef ,
-    netex:order .
+    netex:\@order .
 
 ## =================================================================
 ## OBJECTS IN SCOPE
@@ -115,9 +115,9 @@ inv:INV_StopPointInJourneyPatternShape a sh:NodeShape ;
     sh:targetClass netex:StopPointInJourneyPattern ;
     rdfs:label "StopPointInJourneyPattern — Inventory ordering" ;
     sh:property [
-        sh:path netex:order ;
+        sh:path netex:\@order ;
         sh:minCount 1 ; sh:maxCount 1 ;
-        sh:name "Order" ;
+        sh:name "@order" ;
         sh:description "Position in the stop sequence; the quota is allocated per leg between ordered stops"
     ] .
 

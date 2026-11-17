@@ -406,7 +406,7 @@ nsr:NSR_ParkingShape a sh:NodeShape ;
         sh:path netex:keyList ;
         sh:name "keyList"
     ] , [
-        sh:path netex:parkingProperties ;
+        sh:path netex:parkingProperties_Collection ;
         sh:name "parkingProperties"
     ] .
 
