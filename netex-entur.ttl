@@ -11,6 +11,9 @@
 ##
 ## Imports: netex-nordic.ttl (Nordic Profile constraints)
 ##          → which imports netex.ttl (base NeTEx classes)
+##          netex-entur-shapes.ttl (generated) — SHACL from the Entur
+##          members' profile:cardinality (nordic-netex-ontology's
+##          scripts/generate-shapes.py; see its docs/adr/0002)
 ##
 ## Generated: 2026-06-09
 ## -----------------------------------------------------------------
@@ -28,7 +31,8 @@
 
 ## --- Import Nordic Profile ---
 <https://entur.org/ontology> a owl:Ontology ;
-    owl:imports <https://netex-cen.eu/profile/nordic> .
+    owl:imports <https://netex-cen.eu/profile/nordic> ,
+                <https://entur.org/ontology/shapes> .
 
 ## Entur reuses the Nordic profile through inheritance and declares its
 ## additional classes as entur:X profile:ProfileClass nodes with
@@ -685,46 +689,24 @@ entur:basedOn a owl:ObjectProperty ;
 ## =================================================================
 ## ENTUR PROFILE CONSTRAINTS
 ## =================================================================
+## How often a field occurs is stated on the members above and generated
+## into netex-entur-shapes.ttl; run
+##   python nordic-netex-ontology/scripts/generate-shapes.py --layer ../netex-entur.ttl
+##     --namespace https://entur.org/ontology# --prefix entur
+##     --ontology https://entur.org/ontology/shapes --out ../netex-entur-shapes.ttl
+## after changing a member. Only what cardinality cannot say stays here.
+## -----------------------------------------------------------------
 
+## Allowed values: hand-written until profile members can carry value
+## lists (nordic-netex-ontology docs/adr/0003).
 entur:ENT_DatedServiceJourneyShape a sh:NodeShape ;
     sh:targetClass netex:DatedServiceJourney ;
     rdfs:label "DatedServiceJourney — Entur constraints" ;
     sh:property [
-        sh:path netex:journeyRef ;
-        sh:name "ServiceJourneyRef" ;
-        sh:description "Reference to the template journey this dated instance realizes" ;
-        sh:minCount 1 ;
-        sh:maxCount 1
-    ] , [
-        sh:path netex:operatingDayRef ;
-        sh:name "OperatingDayRef" ;
-        sh:description "The specific operating day this journey runs on" ;
-        sh:minCount 1 ;
-        sh:maxCount 1
-    ] , [
-        sh:path netex:datedVehicleJourneyRef ;
-        sh:name "DatedVehicleJourneyRef" ;
-        sh:description "Deviation/replacement tracking used by Entur"
-    ] , [
         sh:path netex:serviceAlteration ;
         sh:name "ServiceAlteration" ;
         sh:description "Alteration status code when journey deviates from plan" ;
-        sh:maxCount 1 ;
         sh:in ( "planned" "cancellation" "replaced" "extraJourney" )
-    ] .
-
-## FareZone is Entur-scoped (not part of the Nordic Profile). This
-## shape replaces the former profile:NP_FareZoneShape, which wrongly lived
-## in the shared netex-nordic.ttl.
-entur:ENT_FareZoneShape a sh:NodeShape ;
-    sh:targetClass netex:FareZone ;
-    rdfs:label "FareZone — Entur constraints" ;
-    sh:property [
-        sh:path netex:name ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:name "Name" ;
-        sh:description "XSD allows 0..1, Entur mandates 1..1"
     ] .
 
 ## =================================================================

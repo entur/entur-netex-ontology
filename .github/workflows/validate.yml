@@ -29,3 +29,12 @@ jobs:
 
       - name: Valider profilinheritance og effektiv allowlist
         run: python3 scripts/validate_profile_inheritance.py
+
+      # Genererte shapes må være i takt med medlemskapet, og ingen
+      # håndskrevet shape får telle et felt som allerede genereres.
+      - name: Genererte Entur-shapes er oppdatert
+        run: >-
+          python3 nordic-netex-ontology/scripts/generate-shapes.py --check
+          --layer ../netex-entur.ttl --namespace https://entur.org/ontology#
+          --prefix entur --ontology https://entur.org/ontology/shapes
+          --out ../netex-entur-shapes.ttl

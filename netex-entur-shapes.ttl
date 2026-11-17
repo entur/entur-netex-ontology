@@ -1,0 +1,182 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix entur: <https://entur.org/ontology#> .
+@prefix netex: <https://netex-cen.eu/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+entur:Block_CardinalityShape a sh:NodeShape ;
+    rdfs:label "Block: generated from profile:cardinality" ;
+    sh:property [ sh:description "Block/@id is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "Block/@version is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@version" ;
+            sh:path <https://netex-cen.eu/ontology#@version> ] ;
+    sh:targetClass netex:Block .
+
+entur:CompoundTrain_CardinalityShape a sh:NodeShape ;
+    rdfs:label "CompoundTrain: generated from profile:cardinality" ;
+    sh:property [ sh:description "CompoundTrain/components is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "components" ;
+            sh:node [ a sh:NodeShape ;
+                    sh:property [ sh:name "TrainInCompoundTrain" ;
+                            sh:node [ a sh:NodeShape ;
+                                    sh:property [ sh:description "CompoundTrain/components/TrainInCompoundTrain/TrainRef/@ref is 1..1 in the profile; the XSD allows 0..1." ;
+                                            sh:minCount 1 ;
+                                            sh:name "TrainRef" ;
+                                            sh:path netex:trainRef ],
+                                        [ sh:description "CompoundTrain/components/TrainInCompoundTrain/@id is 1..1 in the profile; the XSD allows 0..1." ;
+                                            sh:minCount 1 ;
+                                            sh:name "@id" ;
+                                            sh:path <https://netex-cen.eu/ontology#@id> ],
+                                        [ sh:description "CompoundTrain/components/TrainInCompoundTrain/@order is 1..1 in the profile; the XSD allows 0..1." ;
+                                            sh:minCount 1 ;
+                                            sh:name "@order" ;
+                                            sh:path <https://netex-cen.eu/ontology#@order> ] ] ;
+                            sh:path netex:trainInCompoundTrain ] ] ;
+            sh:path netex:components ],
+        [ sh:description "CompoundTrain/@id is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "CompoundTrain/@version is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@version" ;
+            sh:path <https://netex-cen.eu/ontology#@version> ] ;
+    sh:targetClass netex:CompoundTrain .
+
+entur:Contract_CardinalityShape a sh:NodeShape ;
+    rdfs:label "Contract: generated from profile:cardinality" ;
+    sh:property [ sh:description "Contract/@id is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "Contract/@version is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@version" ;
+            sh:path <https://netex-cen.eu/ontology#@version> ] ;
+    sh:targetClass netex:Contract .
+
+entur:DatedServiceJourney_CardinalityShape a sh:NodeShape ;
+    rdfs:label "DatedServiceJourney: generated from profile:cardinality" ;
+    sh:property [ sh:description "DatedServiceJourney/OperatingDayRef/@ref is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "OperatingDayRef" ;
+            sh:path netex:operatingDayRef ],
+        [ sh:description "DatedServiceJourney/ServiceJourneyRef/@ref is 1..1 in the profile; the XSD allows 0..n." ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:name "ServiceJourneyRef" ;
+            sh:path netex:serviceJourneyRef ],
+        [ sh:description "DatedServiceJourney/@id is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "DatedServiceJourney/@version is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@version" ;
+            sh:path <https://netex-cen.eu/ontology#@version> ] ;
+    sh:targetClass netex:DatedServiceJourney .
+
+entur:FareContract_CardinalityShape a sh:NodeShape ;
+    rdfs:label "FareContract: generated from profile:cardinality" ;
+    sh:property [ sh:description "FareContract/TypeOfFareContractRef/@ref is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "TypeOfFareContractRef" ;
+            sh:path netex:typeOfFareContractRef ],
+        [ sh:name "fareContractEntries" ;
+            sh:node [ a sh:NodeShape ;
+                    sh:property [ sh:name "FareContractEntry" ;
+                            sh:node [ a sh:NodeShape ;
+                                    sh:property [ sh:description "FareContract/fareContractEntries/FareContractEntry/@id is 1..1 in the profile; the XSD allows 0..1." ;
+                                            sh:minCount 1 ;
+                                            sh:name "@id" ;
+                                            sh:path <https://netex-cen.eu/ontology#@id> ],
+                                        [ sh:description "FareContract/fareContractEntries/FareContractEntry/@version is 1..1 in the profile; the XSD allows 0..1." ;
+                                            sh:minCount 1 ;
+                                            sh:name "@version" ;
+                                            sh:path <https://netex-cen.eu/ontology#@version> ] ] ;
+                            sh:path netex:fareContractEntry ] ] ;
+            sh:path netex:fareContractEntries ],
+        [ sh:description "FareContract/@id is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "FareContract/@version is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@version" ;
+            sh:path <https://netex-cen.eu/ontology#@version> ] ;
+    sh:targetClass netex:FareContract .
+
+entur:FareZone_CardinalityShape a sh:NodeShape ;
+    rdfs:label "FareZone: generated from profile:cardinality" ;
+    sh:property [ sh:description "FareZone/Name is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "Name" ;
+            sh:path netex:name ],
+        [ sh:description "FareZone/@id is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "FareZone/@version is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@version" ;
+            sh:path <https://netex-cen.eu/ontology#@version> ] ;
+    sh:targetClass netex:FareZone .
+
+entur:TrainBlock_CardinalityShape a sh:NodeShape ;
+    rdfs:label "TrainBlock: generated from profile:cardinality" ;
+    sh:property [ sh:description "TrainBlock/@id is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "TrainBlock/@version is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@version" ;
+            sh:path <https://netex-cen.eu/ontology#@version> ] ;
+    sh:targetClass netex:TrainBlock .
+
+entur:Train_CardinalityShape a sh:NodeShape ;
+    rdfs:label "Train: generated from profile:cardinality" ;
+    sh:property [ sh:name "components" ;
+            sh:node [ a sh:NodeShape ;
+                    sh:property [ sh:name "TrainComponent" ;
+                            sh:node [ a sh:NodeShape ;
+                                    sh:property [ sh:name "TrainElement" ;
+                                            sh:node [ a sh:NodeShape ;
+                                                    sh:property [ sh:description "Train/components/TrainComponent/TrainElement/@id is 1..1 in the profile; the XSD allows 0..1." ;
+                                                            sh:minCount 1 ;
+                                                            sh:name "@id" ;
+                                                            sh:path <https://netex-cen.eu/ontology#@id> ] ] ;
+                                            sh:path netex:trainElement ],
+                                        [ sh:description "Train/components/TrainComponent/@id is 1..1 in the profile; the XSD allows 0..1." ;
+                                            sh:minCount 1 ;
+                                            sh:name "@id" ;
+                                            sh:path <https://netex-cen.eu/ontology#@id> ],
+                                        [ sh:description "Train/components/TrainComponent/@order is 1..1 in the profile; the XSD allows 0..1." ;
+                                            sh:minCount 1 ;
+                                            sh:name "@order" ;
+                                            sh:path <https://netex-cen.eu/ontology#@order> ] ] ;
+                            sh:path netex:trainComponent ] ] ;
+            sh:path netex:components ],
+        [ sh:description "Train/@id is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@id" ;
+            sh:path <https://netex-cen.eu/ontology#@id> ],
+        [ sh:description "Train/@version is 1..1 in the profile; the XSD allows 0..1." ;
+            sh:minCount 1 ;
+            sh:name "@version" ;
+            sh:path <https://netex-cen.eu/ontology#@version> ] ;
+    sh:targetClass netex:Train .
+
+<https://entur.org/ontology/shapes> a owl:Ontology ;
+    dcterms:title "../netex-entur.ttl: shapes generated from profile:cardinality" ;
+    rdfs:comment "Generated by scripts/generate-shapes.py from the profile:cardinality of the members in ../netex-entur.ttl, where the profile is stricter than the XSD (docs/adr/0002). Do not hand-edit; change the membership and regenerate." ;
+    prov:wasAttributedTo <https://github.com/entur/nordic-netex-ontology/blob/main/scripts/generate-shapes.py> .
+
