@@ -11,6 +11,9 @@
 ##
 ## Imports: netex-nordic.ttl (Nordic Profile constraints)
 ##          → which imports netex.ttl (base NeTEx classes)
+##          netex-entur-shapes.ttl (generated) — SHACL from the Entur
+##          members' profile:cardinality (nordic-netex-ontology's
+##          scripts/generate-shapes.py; see its docs/adr/0002)
 ##
 ## Generated: 2026-06-09
 ## -----------------------------------------------------------------
@@ -28,7 +31,8 @@
 
 ## --- Import Nordic Profile ---
 <https://entur.org/ontology> a owl:Ontology ;
-    owl:imports <https://netex-cen.eu/profile/nordic> .
+    owl:imports <https://netex-cen.eu/profile/nordic> ,
+                <https://entur.org/ontology/shapes> .
 
 ## Entur reuses the Nordic profile through inheritance and declares its
 ## additional classes as entur:X profile:ProfileClass nodes with
@@ -53,6 +57,11 @@ entur:provenance a owl:ObjectProperty ;
 entur:Baseline a entur:Provenance ;
     rdfs:label "Entur baseline" ;
     skos:definition "An initial Entur profile rule not yet tracked to a separate decision" .
+
+entur:replacedBy a owl:ObjectProperty ;
+    rdfs:label "replaced by" ;
+    rdfs:domain profile:ProfileClass ;
+    skos:definition "The standard class Entur uses instead of the class this profile node excludes" .
 
 ## =================================================================
 ## ENTUR PROFILE CLASSES AND FIELD DEFINITIONS
@@ -360,6 +369,41 @@ entur:FareZone a profile:ProfileClass ;
     skos:definition "Reference to a stop point belonging to this zone"@en ;
     entur:provenance entur:Baseline .
 
+## --- TariffZone (Entur): not used in Norway ---
+## The Nordic Profile keeps TariffZone for the countries that use it. In
+## Norway it was replaced by FareZone, so Entur excludes it: no TariffZone
+## objects, and no TariffZoneRef where a StopPlace lists its zones.
+entur:TariffZone a profile:ProfileClass ;
+    profile:onClass netex:TariffZone ;
+    profile:scope profile:Entur ;
+    entur:replacedBy netex:FareZone ;
+    skos:scopeNote "Not used in Norway. TariffZone was deprecated in favour of FareZone in 2022 and its references were removed from Entur's StopPlace, Geocoder and Journey Planner APIs on 2026-11-17. It stays in the Nordic Profile for the countries that still use it. Compare the NSR export shapes: TariffZone carries a name, a polygon, a validity and keys; FareZone adds the authority, scoping method, zone topology, members and neighbours."@en ;
+    skos:historyNote "2022: deprecated in favour of FareZone. 2026-11-17 12:00: TariffZone references removed from the StopPlace, Geocoder and Journey Planner APIs."@en ;
+    skos:editorialNote "TariffZone har ingen metadata. Det er bare navn og id. FareZone er mer juicy."@no ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:TariffZone ;
+    profile:element "@id" ;
+    profile:path "TariffZone/@id" ;
+    profile:cardinality "0..0" ;
+    skos:definition "Not used in Norway: use FareZone (see entur:TariffZone)"@en ;
+    entur:provenance entur:Baseline .
+
+## --- StopPlace (Entur): zones are FareZones ---
+entur:StopPlace a profile:ProfileClass ;
+    profile:onClass netex:StopPlace ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:StopPlace ;
+    profile:element "TariffZoneRef/@ref" ;
+    profile:path "StopPlace/tariffZones/TariffZoneRef/@ref" ;
+    profile:cardinality "0..0" ;
+    skos:definition "Not used in Norway: a StopPlace lists its zones as FareZoneRef (see entur:TariffZone)"@en ;
+    entur:provenance entur:Baseline .
+
 ## --- Train (Entur) ---
 entur:Train a profile:ProfileClass ;
     profile:onClass netex:Train ;
@@ -512,8 +556,8 @@ entur:Block a profile:ProfileClass ;
     profile:memberOf entur:Block ;
     profile:element "journeys" ;
     profile:path "Block/journeys" ;
-    profile:cardinality "0..1" ;
-    skos:definition "Container for VehicleJourneyRef elements linking journeys to this block"@en ;
+    profile:cardinality "1..1" ;
+    skos:definition "Container for VehicleJourneyRef elements linking journeys to this block; required, a block without journeys is an error (Antu BLOCK_2)"@en ;
     entur:provenance entur:Baseline .
 
 ## --- TrainBlock (Entur) ---
@@ -572,6 +616,23 @@ entur:TrainBlock a profile:ProfileClass ;
 entur:VehicleScheduleFrame a profile:ProfileClass ;
     profile:onClass netex:VehicleScheduleFrame ;
     profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+## --- CompositeFrame (Entur): validity is stated on the frame ---
+## Entur requires validityConditions on every CompositeFrame. The Swedish
+## variant in Antu also accepts ValidBetween, so this is Entur's rule, not
+## the Nordic Profile's.
+entur:CompositeFrame a profile:ProfileClass ;
+    profile:onClass netex:CompositeFrame ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:CompositeFrame ;
+    profile:element "validityConditions" ;
+    profile:path "CompositeFrame/validityConditions" ;
+    profile:cardinality "1..1" ;
+    skos:definition "Validity conditions that apply to all data in the frame; required (Antu COMPOSITE_FRAME_1)"@en ;
     entur:provenance entur:Baseline .
 
 ## =================================================================
@@ -685,46 +746,24 @@ entur:basedOn a owl:ObjectProperty ;
 ## =================================================================
 ## ENTUR PROFILE CONSTRAINTS
 ## =================================================================
+## How often a field occurs is stated on the members above and generated
+## into netex-entur-shapes.ttl; run
+##   python nordic-netex-ontology/scripts/generate-shapes.py --layer ../netex-entur.ttl
+##     --namespace https://entur.org/ontology# --prefix entur
+##     --ontology https://entur.org/ontology/shapes --out ../netex-entur-shapes.ttl
+## after changing a member. Only what cardinality cannot say stays here.
+## -----------------------------------------------------------------
 
+## Allowed values: hand-written until profile members can carry value
+## lists (nordic-netex-ontology docs/adr/0003).
 entur:ENT_DatedServiceJourneyShape a sh:NodeShape ;
     sh:targetClass netex:DatedServiceJourney ;
     rdfs:label "DatedServiceJourney — Entur constraints" ;
     sh:property [
-        sh:path netex:journeyRef ;
-        sh:name "ServiceJourneyRef" ;
-        sh:description "Reference to the template journey this dated instance realizes" ;
-        sh:minCount 1 ;
-        sh:maxCount 1
-    ] , [
-        sh:path netex:operatingDayRef ;
-        sh:name "OperatingDayRef" ;
-        sh:description "The specific operating day this journey runs on" ;
-        sh:minCount 1 ;
-        sh:maxCount 1
-    ] , [
-        sh:path netex:datedVehicleJourneyRef ;
-        sh:name "DatedVehicleJourneyRef" ;
-        sh:description "Deviation/replacement tracking used by Entur"
-    ] , [
         sh:path netex:serviceAlteration ;
         sh:name "ServiceAlteration" ;
         sh:description "Alteration status code when journey deviates from plan" ;
-        sh:maxCount 1 ;
         sh:in ( "planned" "cancellation" "replaced" "extraJourney" )
-    ] .
-
-## FareZone is Entur-scoped (not part of the Nordic Profile). This
-## shape replaces the former profile:NP_FareZoneShape, which wrongly lived
-## in the shared netex-nordic.ttl.
-entur:ENT_FareZoneShape a sh:NodeShape ;
-    sh:targetClass netex:FareZone ;
-    rdfs:label "FareZone — Entur constraints" ;
-    sh:property [
-        sh:path netex:name ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:name "Name" ;
-        sh:description "XSD allows 0..1, Entur mandates 1..1"
     ] .
 
 ## =================================================================
