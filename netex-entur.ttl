@@ -240,6 +240,7 @@ entur:DatedServiceJourney a profile:ProfileClass ;
     profile:element "ServiceAlteration" ;
     profile:path "DatedServiceJourney/ServiceAlteration" ;
     profile:cardinality "0..1" ;
+    profile:allowedValues ( "planned" "cancellation" "replaced" "extraJourney" ) ;
     skos:definition "Deviation type. Allowed values: `planned` · `cancellation` · `replaced` · `extraJourney`. Omitted implies `planned`."@en ;
     entur:provenance entur:Baseline .
 [] a profile:ProfileMember ;
@@ -367,6 +368,54 @@ entur:FareZone a profile:ProfileClass ;
     profile:path "FareZone/members/ScheduledStopPointRef/@ref" ;
     profile:cardinality "0..n" ;
     skos:definition "Reference to a stop point belonging to this zone"@en ;
+    entur:provenance entur:Baseline .
+
+## --- Authority and Operator (Entur): legal identity, recommended ---
+## Entur asks for the organisation number and legal name of every
+## Authority and Operator, but only as information: a missing value is
+## reported, not rejected (Antu AUTHORITY_1/3, OPERATOR_1/3, all INFO).
+entur:Authority a profile:ProfileClass ;
+    profile:onClass netex:Authority ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Authority ;
+    profile:element "CompanyNumber" ;
+    profile:path "Authority/CompanyNumber" ;
+    profile:cardinality "1..1" ;
+    profile:severity sh:Info ;
+    skos:definition "Organisation number; a missing value is reported as information (Antu AUTHORITY_1)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Authority ;
+    profile:element "LegalName" ;
+    profile:path "Authority/LegalName" ;
+    profile:cardinality "1..1" ;
+    profile:severity sh:Info ;
+    skos:definition "Registered legal name; a missing value is reported as information (Antu AUTHORITY_3)"@en ;
+    entur:provenance entur:Baseline .
+
+entur:Operator a profile:ProfileClass ;
+    profile:onClass netex:Operator ;
+    profile:scope profile:Entur ;
+    entur:provenance entur:Baseline .
+
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Operator ;
+    profile:element "CompanyNumber" ;
+    profile:path "Operator/CompanyNumber" ;
+    profile:cardinality "1..1" ;
+    profile:severity sh:Info ;
+    skos:definition "Organisation number; a missing value is reported as information (Antu OPERATOR_1)"@en ;
+    entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Operator ;
+    profile:element "LegalName" ;
+    profile:path "Operator/LegalName" ;
+    profile:cardinality "1..1" ;
+    profile:severity sh:Info ;
+    skos:definition "Registered legal name; a missing value is reported as information (Antu OPERATOR_3)"@en ;
     entur:provenance entur:Baseline .
 
 ## --- TariffZone (Entur): not used in Norway ---
@@ -559,6 +608,14 @@ entur:Block a profile:ProfileClass ;
     profile:cardinality "1..1" ;
     skos:definition "Container for VehicleJourneyRef elements linking journeys to this block; required, a block without journeys is an error (Antu BLOCK_2)"@en ;
     entur:provenance entur:Baseline .
+[] a profile:ProfileMember ;
+    profile:memberOf entur:Block ;
+    profile:element "dayTypes" ;
+    profile:path "Block/dayTypes" ;
+    profile:cardinality "1..1" ;
+    profile:severity sh:Warning ;
+    skos:definition "The day types the block operates on; expected, a block without them is reported as a warning (Antu BLOCK_3)"@en ;
+    entur:provenance entur:Baseline .
 
 ## --- TrainBlock (Entur) ---
 entur:TrainBlock a profile:ProfileClass ;
@@ -746,25 +803,15 @@ entur:basedOn a owl:ObjectProperty ;
 ## =================================================================
 ## ENTUR PROFILE CONSTRAINTS
 ## =================================================================
-## How often a field occurs is stated on the members above and generated
-## into netex-entur-shapes.ttl; run
+## How often a field occurs, which values it may take and how serious a
+## violation is, are stated on the members above (profile:cardinality,
+## profile:allowedValues, profile:severity) and generated into
+## netex-entur-shapes.ttl; run
 ##   python nordic-netex-ontology/scripts/generate-shapes.py --layer ../netex-entur.ttl
 ##     --namespace https://entur.org/ontology# --prefix entur
 ##     --ontology https://entur.org/ontology/shapes --out ../netex-entur-shapes.ttl
-## after changing a member. Only what cardinality cannot say stays here.
+## after changing a member. No hand-written shapes remain in this file.
 ## -----------------------------------------------------------------
-
-## Allowed values: hand-written until profile members can carry value
-## lists (nordic-netex-ontology docs/adr/0003).
-entur:ENT_DatedServiceJourneyShape a sh:NodeShape ;
-    sh:targetClass netex:DatedServiceJourney ;
-    rdfs:label "DatedServiceJourney — Entur constraints" ;
-    sh:property [
-        sh:path netex:serviceAlteration ;
-        sh:name "ServiceAlteration" ;
-        sh:description "Alteration status code when journey deviates from plan" ;
-        sh:in ( "planned" "cancellation" "replaced" "extraJourney" )
-    ] .
 
 ## =================================================================
 ## DATA GOVERNANCE
